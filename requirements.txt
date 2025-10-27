@@ -2,5 +2,5 @@ fastapi==0.95.2
 uvicorn==0.22.0
 pydantic==1.10.7
 sqlalchemy==1.4.52
-psycopg2-binary==2.9.6
+pg8000==1.30.6
 pytest==7.4.0
