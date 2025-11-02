@@ -40,4 +40,10 @@ def ping_db(engine: Engine) -> bool:
 
 def init_models(engine: Engine):
     # Create tables if they don't exist
+    # Ensure models are imported so that metadata is populated
+    try:
+        import backend.models_sql  # noqa: F401
+    except Exception:
+        # If import fails, continue; create_all will run on whatever metadata exists
+        pass
     Base.metadata.create_all(bind=engine)
