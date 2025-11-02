@@ -16,6 +16,11 @@ dist/
 # Pytest cache
 .pytest_cache/
 
+# Environment variables (contains sensitive data)
+.env
+*.env
+!.env.example
+
 # Editor and OS files
 .vscode/
 .idea/

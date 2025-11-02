@@ -61,14 +61,55 @@ docker run --name ecomnova-db -e POSTGRES_USER=ecomnova_user -e POSTGRES_PASSWOR
 
 ## Initialiser les tables
 
-Le projet contient la fonction `init_models` (SQLAlchemy) qui crée les tables nécessaires depuis les modèles.
+### Méthode 1 : Script Python automatique (RECOMMANDÉ)
 
+Le projet contient un script `create_db.py` qui crée automatiquement toutes les tables depuis les modèles SQLAlchemy.
+
+**Étapes :**
+
+1. Créer un fichier `.env` dans le dossier `backend/` avec la connexion DB :
 ```bash
-source .venv/bin/activate
-python -c "from backend.db import get_engine, init_models; import os; engine=get_engine(os.environ['DATABASE_URL']); init_models(engine); print('init OK')"
+# backend/.env
+DATABASE_URL=postgresql://ecomnova_user:1234@localhost:5432/ecomnova
 ```
 
-Si tu vois `init OK`, les tables ont été créées avec succès.
+2. Donner les droits nécessaires à l'utilisateur PostgreSQL (une seule fois) :
+```bash
+sudo -u postgres psql -d ecomnova -c "GRANT ALL PRIVILEGES ON SCHEMA public TO ecomnova_user;"
+```
+
+3. Exécuter le script de création :
+```bash
+source .venv/bin/activate
+cd backend
+python create_db.py
+```
+
+Le script affichera :
+```
+✅ Toutes les tables ont été créées avec succès!
+
+Tables créées:
+  ✓ users
+  ✓ products
+  ✓ carts
+  ✓ cart_items
+  ✓ orders
+  ✓ order_items
+```
+
+**Vérification :**
+```bash
+PGPASSWORD=1234 psql -h localhost -U ecomnova_user -d ecomnova -c "\dt"
+```
+
+### Méthode 2 : Script SQL manuel (alternative)
+
+Si tu préfères utiliser un script SQL brut :
+
+```bash
+PGPASSWORD=1234 psql -h localhost -U ecomnova_user -d ecomnova -f backend/schema.sql
+```
 
 ## Lancer l'API
 
