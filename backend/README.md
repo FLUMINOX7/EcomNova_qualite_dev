@@ -123,6 +123,17 @@ Endpoints utiles (exemples) :
 - GET /health — vérifie que le serveur tourne
 - GET /ping-db — vérifie la connectivité à la DB
 
+### Endpoints Core (en mémoire)
+
+Le backend expose aussi une intégration directe du domaine "en mémoire" défini dans `backend/core.py`, sous le préfixe `/core`.
+
+- `POST /core/auth/register`, `POST /core/auth/login`, `GET /core/auth/me`
+- `GET /core/products`, `POST /core/products`
+- `GET /core/cart`, `POST /core/cart/items`
+- `POST /core/orders`
+
+Ces endpoints ne touchent pas la base de données et stockent tout en RAM (sessions, produits, paniers, commandes). Ils sont très utiles pour les tests et démonstrations rapides sans dépendre de PostgreSQL.
+
 ## Tests
 
 Les tests unitaires sont exécutés avec `pytest` :

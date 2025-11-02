@@ -42,6 +42,20 @@ Le serveur sera accessible sur:
 
 ## 📋 Endpoints Implémentés
 
+### Core (in‑memory) (`/core`)
+Ces endpoints utilisent le domaine en mémoire défini dans `backend/core.py` (aucune persistance en base). Utile pour la démo, les tests et le prototypage.
+
+- `POST /core/auth/register` — inscription (sessions en mémoire)
+- `POST /core/auth/login` — connexion (retourne un token de session en mémoire)
+- `GET  /core/auth/me` — informations de l'utilisateur courant
+- `GET  /core/products` — liste des produits actifs (en mémoire)
+- `POST /core/products` — créer un produit (en mémoire)
+- `GET  /core/cart` — voir le panier
+- `POST /core/cart/items` — ajouter un article au panier
+- `POST /core/orders` — checkout (création commande à partir du panier)
+
+Note: pour ces endpoints, le header d'auth attendu est `Authorization: Bearer <token_session>` où le token provient de `POST /core/auth/login`.
+
 ### Authentication (`/auth`)
 - `POST /auth/register` - Inscription d'un nouvel utilisateur
 - `POST /auth/login` - Connexion utilisateur (retourne JWT token)
@@ -137,6 +151,7 @@ backend/
     ├── products.py       # Routes products
     ├── cart.py           # Routes cart
     ├── orders.py         # Routes orders
+  ├── core_integration.py # Routes Core en mémoire (/core)
     └── __init__.py
 ```
 
