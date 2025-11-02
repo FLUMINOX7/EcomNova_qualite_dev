@@ -12,7 +12,7 @@ from sqlalchemy import (
     Enum,
 )
 from sqlalchemy.orm import relationship
-from db import Base
+from backend.db import Base
 
 
 class OrderStatusEnum(str, enum.Enum):
