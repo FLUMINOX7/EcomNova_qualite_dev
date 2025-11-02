@@ -1,9 +1,6 @@
 from __future__ import annotations
-from sqlalchemy import Column, String, Integer, Boolean, Text
-from sqlalchemy.orm import relationship
-from .db import Base
-from __future__ import annotations
 from typing import List, Optional
+import enum
 from sqlalchemy import (
     Column,
     String,
@@ -15,8 +12,7 @@ from sqlalchemy import (
     Enum,
 )
 from sqlalchemy.orm import relationship
-from .db import Base
-import enum
+from db import Base
 
 
 class OrderStatusEnum(str, enum.Enum):
