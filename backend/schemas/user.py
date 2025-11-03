@@ -1,6 +1,7 @@
 """User-related Pydantic schemas"""
 from __future__ import annotations
 from pydantic import BaseModel, EmailStr, Field
+from typing import Optional
 
 
 class UserRegister(BaseModel):
@@ -29,6 +30,14 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class UserUpdate(BaseModel):
+    """Schema for updating user personal information"""
+    email: Optional[EmailStr] = None
+    first_name: Optional[str] = Field(None, min_length=1)
+    last_name: Optional[str] = Field(None, min_length=1)
+    address: Optional[str] = Field(None, min_length=1)
 
 
 class TokenResponse(BaseModel):

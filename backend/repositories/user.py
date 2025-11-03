@@ -48,3 +48,35 @@ class UserRepository:
     def email_exists(self, email: str) -> bool:
         """Check if email already exists"""
         return self.db.query(UserModel).filter(UserModel.email == email).first() is not None
+
+    def update_user(
+        self,
+        user_id: str,
+        *,
+        email: Optional[str] = None,
+        first_name: Optional[str] = None,
+        last_name: Optional[str] = None,
+        address: Optional[str] = None,
+    ) -> Optional[UserModel]:
+        """Update user fields; returns updated user or None if not found.
+        If email is provided and changed, ensures uniqueness.
+        """
+        user = self.get_user_by_id(user_id)
+        if not user:
+            return None
+
+        if email is not None and email != user.email:
+            # enforce email uniqueness
+            if self.email_exists(email):
+                raise ValueError("Email already registered")
+            user.email = email
+        if first_name is not None:
+            user.first_name = first_name
+        if last_name is not None:
+            user.last_name = last_name
+        if address is not None:
+            user.address = address
+
+        self.db.commit()
+        self.db.refresh(user)
+        return user
