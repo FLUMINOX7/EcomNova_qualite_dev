@@ -25,7 +25,7 @@ async function request(path, opts = {}) {
   
   try {
     return await res.json()
-  } catch (e) {
+  } catch {
     return null
   }
 }

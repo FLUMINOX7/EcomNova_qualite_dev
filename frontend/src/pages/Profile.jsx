@@ -7,7 +7,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ'\-\s]{2,}$/
 
 export default function Profile() {
-  const { isAuthenticated, user, login } = useAuth()
+  const { isAuthenticated, login } = useAuth()
   const { show } = useNotify()
 
   const [form, setForm] = useState({
@@ -30,14 +30,14 @@ export default function Profile() {
           last_name: me.last_name || '',
           address: me.address || ''
         })
-      } catch (e) {
+      } catch {
         show("Impossible de charger le profil", 'error')
       } finally {
         setLoading(false)
       }
     }
     load()
-  }, [])
+  }, [show])
 
   const validate = (data) => {
     const errs = {}

@@ -31,7 +31,8 @@ export default function Auth() {
   const validateRegister = (data) => {
     const errors = {}
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+\-={}:;"'`~<>,.?/\\\[\]]{8,72}$/
+    // 8-72 chars, at least one letter and one digit
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,72}$/
     const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,}$/
 
     if (!emailRegex.test(data.email)) {
