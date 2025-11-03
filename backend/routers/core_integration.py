@@ -80,28 +80,34 @@ def _require_token(authorization: Optional[str]) -> str:
 @router.post("/auth/register", response_model=CoreUser)
 def core_register(payload: CoreRegister):
     auth, *_ = core_services()
-    u = auth.register(
-        email=payload.email,
-        password=payload.password,
-        first_name=payload.first_name,
-        last_name=payload.last_name,
-        address=payload.address,
-    )
-    return CoreUser(
-        id=u.id,
-        email=u.email,
-        first_name=u.first_name,
-        last_name=u.last_name,
-        address=u.address,
-        is_admin=u.is_admin,
-    )
+    try:
+        u = auth.register(
+            email=payload.email,
+            password=payload.password,
+            first_name=payload.first_name,
+            last_name=payload.last_name,
+            address=payload.address,
+        )
+        return CoreUser(
+            id=u.id,
+            email=u.email,
+            first_name=u.first_name,
+            last_name=u.last_name,
+            address=u.address,
+            is_admin=u.is_admin,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.post("/auth/login")
 def core_login(payload: CoreLogin):
     auth, *_ = core_services()
-    token = auth.login(payload.email, payload.password)
-    return {"access_token": token, "token_type": "bearer"}
+    try:
+        token = auth.login(payload.email, payload.password)
+        return {"access_token": token, "token_type": "bearer"}
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=str(e))
 
 
 @router.get("/auth/me", response_model=CoreUser)
@@ -181,5 +187,8 @@ def core_checkout(authorization: Optional[str] = Header(default=None)):
     *_, orders, sessions = core_services()
     token = _require_token(authorization)
     user_id = sessions.get_user_id(token)
-    o = orders.checkout(user_id)
-    return CoreOrder(id=o.id, user_id=o.user_id, total_cents=o.total_cents(), status=o.status.name)
+    try:
+        o = orders.checkout(user_id)
+        return CoreOrder(id=o.id, user_id=o.user_id, total_cents=o.total_cents(), status=o.status.name)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
