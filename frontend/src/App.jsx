@@ -1,18 +1,37 @@
 import React from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { CartProvider, useCart } from './contexts/CartContext'
 import Catalog from './pages/Catalog'
 import Product from './pages/Product'
 import Cart from './pages/Cart'
 import Auth from './pages/Auth'
+import Checkout from './pages/Checkout'
 
-export default function App() {
+function AppContent() {
+  const { isAuthenticated, user, logout } = useAuth()
+  const { getTotalItems } = useCart()
+
   return (
     <div className="app-root">
       <header className="site-header">
         <Link to="/" className="logo">EcomNova</Link>
         <nav>
-          <Link to="/cart">Panier</Link>
-          <Link to="/auth">Connexion</Link>
+          <Link to="/cart">
+            Panier {getTotalItems() > 0 && `(${getTotalItems()})`}
+          </Link>
+          {isAuthenticated ? (
+            <>
+              <span style={{ color: 'var(--galaxy-cyan)' }}>
+                {user?.email}
+              </span>
+              <button onClick={logout} className="btn btn-secondary">
+                Déconnexion
+              </button>
+            </>
+          ) : (
+            <Link to="/auth">Connexion</Link>
+          )}
         </nav>
       </header>
 
@@ -21,46 +40,24 @@ export default function App() {
           <Route path="/" element={<Catalog />} />
           <Route path="/product/:id" element={<Product />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/auth" element={<Auth />} />
         </Routes>
       </main>
 
-      <footer className="site-footer">© EcomNova</footer>
+      <footer className="site-footer">
+        © 2025 EcomNova - Cutting-edge technology for tomorrow
+      </footer>
     </div>
   )
 }
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <AuthProvider>
+      <CartProvider>
+        <AppContent />
+      </CartProvider>
+    </AuthProvider>
   )
 }
-
-export default App
