@@ -87,7 +87,24 @@ export default function Auth() {
         navigate('/')
       }
     } catch (err) {
-      const msg = err?.message || 'Une erreur est survenue'
+      let msg = 'Une erreur est survenue'
+      
+      if (mode === 'login') {
+        // Parse specific login errors
+        const errText = err?.message || ''
+        if (errText.includes('401') || errText.toLowerCase().includes('invalid credentials')) {
+          msg = 'Email ou mot de passe incorrect'
+        } else if (errText.includes('404')) {
+          msg = 'Compte introuvable'
+        }
+      } else {
+        // Registration errors
+        const errText = err?.message || ''
+        if (errText.toLowerCase().includes('email already registered')) {
+          msg = 'Cet email est déjà utilisé'
+        }
+      }
+      
       setError(msg)
       show(msg, 'error')
     } finally {

@@ -90,7 +90,7 @@ export default function Cart() {
 
             <div style={{ textAlign: 'right', minWidth: '100px' }}>
               <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--galaxy-cyan)' }}>
-                {(item.product.price * item.quantity).toFixed(2)} €
+                {item.product.price_cents ? ((item.product.price_cents / 100) * item.quantity).toFixed(2) : '—'} €
               </div>
               <button
                 onClick={() => removeFromCart(item.product.id, item.itemId)}
