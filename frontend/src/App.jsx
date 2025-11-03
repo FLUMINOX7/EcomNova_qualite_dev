@@ -2,6 +2,7 @@ import React from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { CartProvider, useCart } from './contexts/CartContext'
+import { NotificationProvider } from './contexts/NotificationContext'
 import Catalog from './pages/Catalog'
 import Product from './pages/Product'
 import Cart from './pages/Cart'
@@ -54,10 +55,12 @@ function AppContent() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <CartProvider>
-        <AppContent />
-      </CartProvider>
-    </AuthProvider>
+    <NotificationProvider>
+      <AuthProvider>
+        <CartProvider>
+          <AppContent />
+        </CartProvider>
+      </AuthProvider>
+    </NotificationProvider>
   )
 }

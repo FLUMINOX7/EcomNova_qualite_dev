@@ -2,15 +2,16 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../contexts/CartContext'
 import { useAuth } from '../contexts/AuthContext'
-import { checkout as apiCheckout } from '../utils/api'
+import { useNotify } from '../contexts/NotificationContext'
+import { createOrder } from '../utils/api'
 
 export default function Checkout() {
   const { cart, clearCart, getTotalPrice } = useCart()
   const { user, isAuthenticated } = useAuth()
+  const { show } = useNotify()
   const navigate = useNavigate()
   
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
 
   if (!isAuthenticated) {
@@ -25,18 +26,18 @@ export default function Checkout() {
 
   const handleOrder = async () => {
     setLoading(true)
-    setError('')
 
     try {
-      const result = await apiCheckout()
+      await createOrder()
       setSuccess(true)
       clearCart()
+      show('Commande confirmée avec succès !', 'success')
       
       setTimeout(() => {
         navigate('/')
       }, 3000)
     } catch (err) {
-      setError(err.message || 'Erreur lors de la commande')
+      show(err.message || 'Erreur lors de la commande', 'error')
     } finally {
       setLoading(false)
     }
@@ -57,8 +58,6 @@ export default function Checkout() {
   return (
     <div style={{ maxWidth: '900px', margin: '0 auto' }}>
       <h1 style={{ marginBottom: '2rem' }}>Finaliser la commande</h1>
-
-      {error && <div className="error">{error}</div>}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
         {/* Left column - Order summary */}
@@ -89,7 +88,7 @@ export default function Checkout() {
                   </div>
                 </div>
                 <div style={{ fontWeight: '600', color: 'var(--galaxy-cyan)' }}>
-                  {(item.product.price * item.quantity).toFixed(2)} €
+                  {((item.product.price_cents / 100) * item.quantity).toFixed(2)} €
                 </div>
               </div>
             ))}

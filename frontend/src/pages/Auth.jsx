@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { login as apiLogin, register as apiRegister } from '../utils/api'
+import { useNotify } from '../contexts/NotificationContext'
 
 export default function Auth() {
   const [mode, setMode] = useState('login') // 'login' or 'register'
@@ -16,6 +17,7 @@ export default function Auth() {
   const [loading, setLoading] = useState(false)
   
   const { login } = useAuth()
+  const { show } = useNotify()
   const navigate = useNavigate()
 
   const handleChange = (e) => {
@@ -33,7 +35,9 @@ export default function Auth() {
     try {
       if (mode === 'login') {
         const data = await apiLogin(formData.email, formData.password)
-        login({ email: formData.email, id: data.user_id }, data.token)
+        // data: { access_token, user }
+        login(data.user, data.access_token)
+        show('Connexion réussie', 'success')
         navigate('/')
       } else {
         const data = await apiRegister(
@@ -43,11 +47,13 @@ export default function Auth() {
           formData.lastName,
           formData.address
         )
-        login({ email: formData.email, id: data.user_id }, data.token)
+        login(data.user, data.access_token)
+        show('Inscription réussie', 'success')
         navigate('/')
       }
     } catch (err) {
       setError(err.message || 'Une erreur est survenue')
+        show(err.message || 'Une erreur est survenue', 'error')
     } finally {
       setLoading(false)
     }
