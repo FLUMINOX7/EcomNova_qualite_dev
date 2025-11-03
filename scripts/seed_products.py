@@ -69,7 +69,7 @@ DEMO_PRODUCTS = [
         "price": 8999.99,
         "stock": 3,
         "category": "Energy",
-        "image": "https://images.unsplash.com/photo-1509390144555-5cc4d37ba78d?w=400"
+        "image": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400"
     },
     {
         "name": "GravityWave Audio System",
@@ -93,7 +93,7 @@ DEMO_PRODUCTS = [
         "price": 899.99,
         "stock": 40,
         "category": "Health",
-        "image": "https://images.unsplash.com/photo-1575058752200-a9d6c0f7f0b7?w=400"
+        "image": "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?w=400"
     },
     {
         "name": "EchoMind AI Assistant",

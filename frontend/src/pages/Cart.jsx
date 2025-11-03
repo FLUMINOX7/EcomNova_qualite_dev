@@ -51,6 +51,10 @@ export default function Cart() {
             <img
               src={item.product.image_url || item.product.image || '/assets/placeholder.svg'}
               alt={item.product.name}
+              onError={(e) => {
+                e.currentTarget.onerror = null
+                e.currentTarget.src = '/assets/placeholder.svg'
+              }}
               style={{
                 width: '100px',
                 height: '100px',

@@ -51,6 +51,10 @@ export default function Product() {
           <img
             src={product.image_url || product.image || '/assets/placeholder.svg'}
             alt={product.name}
+            onError={(e) => {
+              e.currentTarget.onerror = null
+              e.currentTarget.src = '/assets/placeholder.svg'
+            }}
             style={{
               width: '100%',
               borderRadius: '12px',
