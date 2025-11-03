@@ -32,7 +32,9 @@ export default function ProductCard({ product }) {
           }}>
             {product.description || 'Produit technologique de pointe'}
           </p>
-          <p className="price">{product.price ? `${product.price} €` : '—'}</p>
+          <p className="price">
+            {product.price_cents ? `${(product.price_cents / 100).toFixed(2)} €` : '—'}
+          </p>
         </div>
       </Link>
       

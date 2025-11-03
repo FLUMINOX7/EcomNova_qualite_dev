@@ -1,9 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import { useAuth } from './AuthContext'
+import { getCart as apiGetCart, addCartItem, updateCartItem, removeCartItem } from '../utils/api'
 
 const CartContext = createContext(null)
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState({ items: [] })
+  const { isAuthenticated } = useAuth()
 
   useEffect(() => {
     // Load cart from localStorage
@@ -18,7 +21,50 @@ export function CartProvider({ children }) {
     localStorage.setItem('cart', JSON.stringify(cart))
   }, [cart])
 
-  const addToCart = (product, quantity = 1) => {
+  // When user becomes authenticated, sync local cart to server, then load server cart
+  useEffect(() => {
+    const sync = async () => {
+      if (!isAuthenticated) return
+      try {
+        // Push local items to server
+        for (const item of cart.items) {
+          await addCartItem(item.product.id, item.quantity)
+        }
+        // Fetch server cart and enrich with product details minimal mapping
+        const serverCart = await apiGetCart()
+        // Map server response items to our structure (no images available here)
+        const items = serverCart.items.map(it => ({
+          itemId: it.id,
+          product: {
+            id: it.product_id,
+            name: it.product_name,
+            price_cents: it.unit_price_cents,
+          },
+          quantity: it.quantity,
+        }))
+        setCart({ items })
+      } catch (e) {
+        // silent fail keeps local cart
+        console.error('Cart sync failed', e)
+      }
+    }
+    sync()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated])
+
+  const addToCart = async (product, quantity = 1) => {
+    // If authenticated, add to server first, then refresh from server
+    if (isAuthenticated) {
+      await addCartItem(product.id, quantity)
+      const serverCart = await apiGetCart()
+      const items = serverCart.items.map(it => ({
+        itemId: it.id,
+        product: { id: it.product_id, name: it.product_name, price_cents: it.unit_price_cents },
+        quantity: it.quantity,
+      }))
+      setCart({ items })
+      return
+    }
     setCart(prev => {
       const existingItem = prev.items.find(item => item.product.id === product.id)
       
@@ -40,9 +86,20 @@ export function CartProvider({ children }) {
     })
   }
 
-  const updateQuantity = (productId, quantity) => {
+  const updateQuantity = async (productId, quantity, itemId) => {
     if (quantity <= 0) {
-      removeFromCart(productId)
+      await removeFromCart(productId, itemId)
+      return
+    }
+    if (isAuthenticated && itemId) {
+      await updateCartItem(itemId, quantity)
+      const serverCart = await apiGetCart()
+      const items = serverCart.items.map(it => ({
+        itemId: it.id,
+        product: { id: it.product_id, name: it.product_name, price_cents: it.unit_price_cents },
+        quantity: it.quantity,
+      }))
+      setCart({ items })
       return
     }
     setCart(prev => ({
@@ -55,7 +112,18 @@ export function CartProvider({ children }) {
     }))
   }
 
-  const removeFromCart = (productId) => {
+  const removeFromCart = async (productId, itemId) => {
+    if (isAuthenticated && itemId) {
+      await removeCartItem(itemId)
+      const serverCart = await apiGetCart()
+      const items = serverCart.items.map(it => ({
+        itemId: it.id,
+        product: { id: it.product_id, name: it.product_name, price_cents: it.unit_price_cents },
+        quantity: it.quantity,
+      }))
+      setCart({ items })
+      return
+    }
     setCart(prev => ({
       ...prev,
       items: prev.items.filter(item => item.product.id !== productId)
@@ -68,7 +136,8 @@ export function CartProvider({ children }) {
 
   const getTotalPrice = () => {
     return cart.items.reduce((total, item) => {
-      return total + (item.product.price * item.quantity)
+      const unit = item.product.price_cents ? item.product.price_cents / 100 : 0
+      return total + unit * item.quantity
     }, 0)
   }
 

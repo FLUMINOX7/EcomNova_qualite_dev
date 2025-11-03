@@ -46,9 +46,9 @@ export function createProduct(data) {
   })
 }
 
-// Auth (using /core endpoints for domain logic)
+// Auth (using SQL endpoints)
 export function register(email, password, firstName, lastName, address) {
-  return request('/core/register', {
+  return request('/auth/register', {
     method: 'POST',
     body: JSON.stringify({
       email,
@@ -61,34 +61,44 @@ export function register(email, password, firstName, lastName, address) {
 }
 
 export function login(email, password) {
-  return request('/core/login', {
+  return request('/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, password })
   })
 }
 
-// Cart (using /core endpoints)
-export function fetchCart() {
-  return request('/core/cart')
+export function getMe() {
+  return request('/auth/me')
 }
 
-export function addToCartAPI(productId, quantity = 1) {
-  return request('/core/cart/add', {
+// Cart (using SQL endpoints)
+export function getCart() {
+  return request('/cart')
+}
+
+export function addCartItem(productId, quantity = 1) {
+  return request('/cart/items', {
     method: 'POST',
     body: JSON.stringify({ product_id: productId, quantity })
   })
 }
 
-export function removeFromCartAPI(productId, quantity = 1) {
-  return request('/core/cart/remove', {
-    method: 'POST',
-    body: JSON.stringify({ product_id: productId, quantity })
+export function updateCartItem(itemId, quantity) {
+  return request(`/cart/items/${itemId}`, {
+    method: 'PUT',
+    body: JSON.stringify({ quantity })
   })
 }
 
-// Orders (using /core endpoints)
-export function checkout() {
-  return request('/core/checkout', {
+export function removeCartItem(itemId) {
+  return request(`/cart/items/${itemId}`, {
+    method: 'DELETE'
+  })
+}
+
+// Orders (using SQL endpoints)
+export function createOrder() {
+  return request('/orders', {
     method: 'POST'
   })
 }
@@ -99,9 +109,11 @@ export default {
   createProduct,
   register,
   login,
-  fetchCart,
-  addToCartAPI,
-  removeFromCartAPI,
-  checkout
+  getMe,
+  getCart,
+  addCartItem,
+  updateCartItem,
+  removeCartItem,
+  createOrder
 }
 

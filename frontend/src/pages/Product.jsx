@@ -62,7 +62,7 @@ export default function Product() {
         <div>
           <h1 style={{ marginBottom: '1rem', fontSize: '2rem' }}>{product.name}</h1>
           <p className="price" style={{ fontSize: '2rem', marginBottom: '1.5rem' }}>
-            {product.price ? `${product.price} €` : 'Prix non disponible'}
+            {product.price_cents ? `${(product.price_cents / 100).toFixed(2)} €` : 'Prix non disponible'}
           </p>
 
           <p style={{ color: 'var(--text-secondary)', lineHeight: '1.7', marginBottom: '2rem' }}>
@@ -74,13 +74,13 @@ export default function Product() {
             <input
               type="number"
               min="1"
-              max={product.stock || 99}
+              max={product.stock_qty || 99}
               value={quantity}
               onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
               style={{ width: '100px' }}
             />
             <span style={{ marginLeft: '1rem', color: 'var(--text-secondary)' }}>
-              En stock: {product.stock || 'N/A'}
+              En stock: {product.stock_qty !== undefined ? product.stock_qty : 'N/A'}
             </span>
           </div>
 

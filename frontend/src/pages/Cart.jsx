@@ -66,7 +66,7 @@ export default function Cart() {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <button
-                onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.itemId)}
                 className="btn btn-secondary"
                 style={{ width: '40px', padding: '0.5rem' }}
               >
@@ -76,7 +76,7 @@ export default function Cart() {
                 {item.quantity}
               </span>
               <button
-                onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.itemId)}
                 className="btn btn-secondary"
                 style={{ width: '40px', padding: '0.5rem' }}
               >
@@ -89,7 +89,7 @@ export default function Cart() {
                 {(item.product.price * item.quantity).toFixed(2)} €
               </div>
               <button
-                onClick={() => removeFromCart(item.product.id)}
+                onClick={() => removeFromCart(item.product.id, item.itemId)}
                 style={{
                   background: 'none',
                   border: 'none',
