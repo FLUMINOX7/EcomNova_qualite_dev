@@ -9,24 +9,58 @@ Plateforme e-commerce moderne développée avec FastAPI, intégrant les bonnes p
 
 ## 🚀 Démarrage Rapide
 
+### Option 1 : Docker (Recommandé) 🐳
+
 ```bash
 # Cloner le dépôt
 git clone https://github.com/FLUMINOX7/EcomNova_qualite_dev.git
 cd EcomNova_qualite_dev
 
+# Lancer tous les services (DB + Backend + Frontend)
+docker-compose up --build
+
+# Accéder aux services
+# Frontend: http://localhost:8080
+# Backend API: http://localhost:8000
+# API Docs: http://localhost:8000/docs
+```
+
+**Commandes utiles:**
+```bash
+# Lancer en arrière-plan
+docker-compose up -d
+
+# Voir les logs
+docker-compose logs -f
+
+# Arrêter les services
+docker-compose down
+
+# Nettoyer complètement (⚠️ supprime les données)
+docker-compose down -v
+
+# Seed la base avec des produits démo
+docker-compose exec backend python scripts/seed_products.py
+```
+
+### Option 2 : Installation Locale
+
+```bash
 # Installer Python 3.12 (recommandé)
 pyenv install 3.12.7
 pyenv local 3.12.7
 
-# Créer l'environnement virtuel
+# Backend
+cd backend
 python -m venv .venv
 source .venv/bin/activate
-
-# Installer les dépendances
 pip install -r requirements.txt
-
-# Lancer l'API
 uvicorn backend.app:app --reload --port 8000
+
+# Frontend (dans un autre terminal)
+cd frontend
+npm install
+npm run dev
 ```
 
 Accédez à la documentation interactive : [http://localhost:8000/docs](http://localhost:8000/docs)
@@ -96,11 +130,13 @@ cat tests/TESTS_README.md
 ## 🛠️ Technologies
 
 - **Backend**: FastAPI 0.115.0, Pydantic 2.10.4
+- **Frontend**: React 19, Vite 7, React Router 7
 - **Base de données**: PostgreSQL + SQLAlchemy 2.0.36
 - **Auth**: JWT (python-jose), bcrypt
-- **Tests**: pytest, httpx, pytest-asyncio
+- **Tests**: pytest, httpx, Vitest, Testing Library
 - **CI/CD**: GitHub Actions
 - **Code Quality**: ruff, black, isort
+- **Containerization**: Docker, Docker Compose
 
 ## 📚 Documentation
 
