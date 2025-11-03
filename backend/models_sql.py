@@ -45,6 +45,7 @@ class ProductModel(Base):
     id = Column(String, primary_key=True, index=True)
     name = Column(String, nullable=False)
     description = Column(Text, nullable=True)
+    image_url = Column(Text, nullable=True)
     price_cents = Column(Integer, nullable=False)
     stock_qty = Column(Integer, nullable=False)
     active = Column(Boolean, default=True)

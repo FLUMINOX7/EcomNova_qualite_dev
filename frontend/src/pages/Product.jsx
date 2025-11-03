@@ -49,7 +49,7 @@ export default function Product() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem' }}>
         <div>
           <img
-            src={product.image || '/assets/placeholder.svg'}
+            src={product.image_url || product.image || '/assets/placeholder.svg'}
             alt={product.name}
             style={{
               width: '100%',

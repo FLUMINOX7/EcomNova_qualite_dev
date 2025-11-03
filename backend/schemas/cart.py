@@ -2,6 +2,7 @@
 from __future__ import annotations
 from typing import List
 from pydantic import BaseModel, Field
+from typing import Optional
 
 
 class CartItemAdd(BaseModel):
@@ -20,6 +21,7 @@ class CartItemResponse(BaseModel):
     id: str
     product_id: str
     product_name: str
+    product_image_url: Optional[str] = None
     unit_price_cents: int
     quantity: int
     total_price_cents: int

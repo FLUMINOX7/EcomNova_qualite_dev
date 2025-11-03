@@ -49,7 +49,7 @@ export default function Cart() {
             }}
           >
             <img
-              src={item.product.image || '/assets/placeholder.svg'}
+              src={item.product.image_url || item.product.image || '/assets/placeholder.svg'}
               alt={item.product.name}
               style={{
                 width: '100px',
@@ -61,7 +61,7 @@ export default function Cart() {
 
             <div style={{ flex: 1 }}>
               <h3>{item.product.name}</h3>
-              <p className="price">{item.product.price} €</p>
+              <p className="price">{item.product.price_cents ? (item.product.price_cents / 100).toFixed(2) : '—'} €</p>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>

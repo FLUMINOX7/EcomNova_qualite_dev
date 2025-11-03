@@ -1,8 +1,9 @@
 """
 Seed data script for EcomNova - Adds demo products to the database
 """
+import uuid
 from backend.dependencies import get_session
-from backend.models_sql import ProductSQL
+from backend.models_sql import ProductModel
 from sqlalchemy.orm import Session
 
 DEMO_PRODUCTS = [
@@ -110,24 +111,48 @@ def seed_products():
     session: Session = next(get_session())
     
     try:
-        # Check if products already exist
-        existing_count = session.query(ProductSQL).count()
-        if existing_count > 0:
-            print(f"Database already has {existing_count} products. Skipping seed.")
-            return
-        
-        # Add all demo products
+        created = 0
+        updated = 0
+
+        # Upsert-like behavior by name: update existing, create missing
         for product_data in DEMO_PRODUCTS:
-            product = ProductSQL(**product_data)
-            session.add(product)
-        
+            existing = (
+                session.query(ProductModel)
+                .filter(ProductModel.name == product_data["name"])
+                .first()
+            )
+            if existing:
+                # Update fields (including backfilling image_url)
+                existing.description = product_data.get("description")
+                existing.image_url = product_data.get("image") or product_data.get("image_url")
+                existing.price_cents = int(product_data["price"] * 100)
+                existing.stock_qty = product_data["stock"]
+                existing.active = True
+                updated += 1
+            else:
+                product = ProductModel(
+                    id=str(uuid.uuid4()),
+                    name=product_data["name"],
+                    description=product_data.get("description"),
+                    image_url=product_data.get("image") or product_data.get("image_url"),
+                    price_cents=int(product_data["price"] * 100),  # Convert to cents
+                    stock_qty=product_data["stock"],
+                    active=True,
+                )
+                session.add(product)
+                created += 1
+
         session.commit()
-        print(f"✓ Successfully added {len(DEMO_PRODUCTS)} demo products to the database!")
+        if created or updated:
+            print(f"✓ Seed complete. Created: {created}, Updated: {updated}")
+        else:
+            print("✓ Seed checked. No changes needed (already up to date).")
         
-        # Display added products
-        print("\nAdded products:")
+        # Display summary of demo products with images
+        print("\nDemo products (name — price — has image):")
         for p in DEMO_PRODUCTS:
-            print(f"  - {p['name']} - {p['price']}€")
+            has_img = bool(p.get('image') or p.get('image_url'))
+            print(f"  - {p['name']} - {p['price']}€ - {'🖼️' if has_img else '—'}")
     
     except Exception as e:
         session.rollback()

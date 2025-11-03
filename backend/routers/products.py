@@ -45,6 +45,7 @@ def create_product(
     product = repo.create_product(
         name=product_data.name,
         description=product_data.description,
+        image_url=product_data.image_url,
         price_cents=product_data.price_cents,
         stock_qty=product_data.stock_qty,
         active=product_data.active
@@ -65,6 +66,7 @@ def update_product(
         product_id=product_id,
         name=product_data.name,
         description=product_data.description,
+        image_url=product_data.image_url,
         price_cents=product_data.price_cents,
         stock_qty=product_data.stock_qty,
         active=product_data.active

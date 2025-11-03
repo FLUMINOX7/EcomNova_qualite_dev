@@ -16,7 +16,7 @@ export default function ProductCard({ product }) {
   return (
     <div className="product-card">
       <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-        <img src={product.image || '/assets/placeholder.svg'} alt={product.name} />
+  <img src={product.image_url || product.image || '/assets/placeholder.svg'} alt={product.name} />
         <div className="product-body">
           <h3>{product.name}</h3>
           <p style={{ 
