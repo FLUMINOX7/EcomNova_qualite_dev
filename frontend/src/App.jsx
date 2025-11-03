@@ -8,6 +8,7 @@ import Product from './pages/Product'
 import Cart from './pages/Cart'
 import Auth from './pages/Auth'
 import Checkout from './pages/Checkout'
+import Profile from './pages/Profile'
 
 function AppContent() {
   const { isAuthenticated, user, logout } = useAuth()
@@ -23,6 +24,7 @@ function AppContent() {
           </Link>
           {isAuthenticated ? (
             <>
+              <Link to="/profile">Profil</Link>
               <span style={{ color: 'var(--galaxy-cyan)' }}>
                 {user?.email}
               </span>
@@ -43,6 +45,7 @@ function AppContent() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </main>
 

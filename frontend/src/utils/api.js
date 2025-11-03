@@ -71,6 +71,18 @@ export function getMe() {
   return request('/auth/me')
 }
 
+export function updateMe(data) {
+  return request('/auth/me', {
+    method: 'PUT',
+    body: JSON.stringify({
+      email: data.email,
+      first_name: data.first_name,
+      last_name: data.last_name,
+      address: data.address,
+    })
+  })
+}
+
 // Cart (using SQL endpoints)
 export function getCart() {
   return request('/cart')
@@ -110,6 +122,7 @@ export default {
   register,
   login,
   getMe,
+  updateMe,
   getCart,
   addCartItem,
   updateCartItem,
