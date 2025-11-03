@@ -15,27 +15,62 @@ export default function Auth() {
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  
+  const [fieldErrors, setFieldErrors] = useState({})
+
   const { login } = useAuth()
   const { show } = useNotify()
   const navigate = useNavigate()
 
   const handleChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }))
+  }
+
+  const validateRegister = (data) => {
+    const errors = {}
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i
+    // 8-72 chars, at least one letter and one digit
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,72}$/
+    const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,}$/
+
+    if (!emailRegex.test(data.email)) {
+      errors.email = 'Email invalide'
+    }
+    if (!passwordRegex.test(data.password)) {
+      errors.password = '8-72 caractères, au moins 1 lettre et 1 chiffre'
+    }
+    if (!nameRegex.test(data.firstName)) {
+      errors.firstName = 'Prénom invalide (2+ lettres, accents autorisés)'
+    }
+    if (!nameRegex.test(data.lastName)) {
+      errors.lastName = 'Nom invalide (2+ lettres, accents autorisés)'
+    }
+    if (!data.address || data.address.trim().length < 5) {
+      errors.address = "Adresse trop courte"
+    }
+    return errors
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-    setLoading(true)
+    setFieldErrors({})
 
+    if (mode === 'register') {
+      const errors = validateRegister(formData)
+      if (Object.keys(errors).length > 0) {
+        setFieldErrors(errors)
+        show('Veuillez corriger les erreurs du formulaire', 'error')
+        return
+      }
+    }
+
+    setLoading(true)
     try {
       if (mode === 'login') {
         const data = await apiLogin(formData.email, formData.password)
-        // data: { access_token, user }
         login(data.user, data.access_token)
         show('Connexion réussie', 'success')
         navigate('/')
@@ -52,8 +87,9 @@ export default function Auth() {
         navigate('/')
       }
     } catch (err) {
-      setError(err.message || 'Une erreur est survenue')
-        show(err.message || 'Une erreur est survenue', 'error')
+      const msg = err?.message || 'Une erreur est survenue'
+      setError(msg)
+      show(msg, 'error')
     } finally {
       setLoading(false)
     }
@@ -78,6 +114,9 @@ export default function Auth() {
             required
             placeholder="votre@email.com"
           />
+          {mode === 'register' && fieldErrors.email && (
+            <div className="error" style={{ marginTop: 6 }}>{fieldErrors.email}</div>
+          )}
         </div>
 
         <div>
@@ -90,6 +129,9 @@ export default function Auth() {
             required
             placeholder="••••••••"
           />
+          {mode === 'register' && fieldErrors.password && (
+            <div className="error" style={{ marginTop: 6 }}>{fieldErrors.password}</div>
+          )}
         </div>
 
         {mode === 'register' && (
@@ -104,6 +146,9 @@ export default function Auth() {
                 required
                 placeholder="John"
               />
+              {fieldErrors.firstName && (
+                <div className="error" style={{ marginTop: 6 }}>{fieldErrors.firstName}</div>
+              )}
             </div>
 
             <div>
@@ -116,6 +161,9 @@ export default function Auth() {
                 required
                 placeholder="Doe"
               />
+              {fieldErrors.lastName && (
+                <div className="error" style={{ marginTop: 6 }}>{fieldErrors.lastName}</div>
+              )}
             </div>
 
             <div>
@@ -128,6 +176,9 @@ export default function Auth() {
                 placeholder="123 Rue de la Technologie, 75001 Paris"
                 rows="3"
               />
+              {fieldErrors.address && (
+                <div className="error" style={{ marginTop: 6 }}>{fieldErrors.address}</div>
+              )}
             </div>
           </>
         )}
@@ -142,13 +193,14 @@ export default function Auth() {
           onClick={() => {
             setMode(mode === 'login' ? 'register' : 'login')
             setError('')
+            setFieldErrors({})
           }}
           style={{
             background: 'none',
             border: 'none',
             color: 'var(--galaxy-cyan)',
             cursor: 'pointer',
-            textDecoration: 'underline'
+            textDecoration: 'underline',
           }}
         >
           {mode === 'login'
