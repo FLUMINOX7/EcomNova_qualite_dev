@@ -3,7 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from backend.dependencies import get_session
-from backend.schemas.user import UserRegister, UserLogin, TokenResponse, UserResponse
+from backend.schemas.user import UserRegister, UserLogin, TokenResponse, UserResponse, UserUpdate
 from backend.repositories.user import UserRepository
 from backend.auth.jwt import verify_password, create_access_token, get_current_user_id
 
@@ -88,4 +88,29 @@ def get_current_user(
             detail="User not found"
         )
     
+    return UserResponse.from_orm(user)
+
+
+@router.put("/me", response_model=UserResponse)
+def update_current_user(
+    update: UserUpdate,
+    user_id: str = Depends(get_current_user_id),
+    db: Session = Depends(get_session)
+):
+    """Update current authenticated user's personal information"""
+    repo = UserRepository(db)
+    try:
+        user = repo.update_user(
+            user_id,
+            email=update.email,
+            first_name=update.first_name,
+            last_name=update.last_name,
+            address=update.address,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
     return UserResponse.from_orm(user)
