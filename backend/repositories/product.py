@@ -16,6 +16,7 @@ class ProductRepository:
         self,
         name: str,
         description: Optional[str],
+        image_url: Optional[str],
         price_cents: int,
         stock_qty: int,
         active: bool = True
@@ -25,6 +26,7 @@ class ProductRepository:
             id=str(uuid.uuid4()),
             name=name,
             description=description,
+            image_url=image_url,
             price_cents=price_cents,
             stock_qty=stock_qty,
             active=active
@@ -50,6 +52,7 @@ class ProductRepository:
         product_id: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
+        image_url: Optional[str] = None,
         price_cents: Optional[int] = None,
         stock_qty: Optional[int] = None,
         active: Optional[bool] = None
@@ -63,6 +66,8 @@ class ProductRepository:
             product.name = name
         if description is not None:
             product.description = description
+        if image_url is not None:
+            product.image_url = image_url
         if price_cents is not None:
             product.price_cents = price_cents
         if stock_qty is not None:
