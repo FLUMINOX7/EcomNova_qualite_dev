@@ -29,14 +29,27 @@ export default function AdminDashboard() {
   async function fetchAllOrders() {
     try {
       const token = localStorage.getItem('token')
+      if (!token) {
+        throw new Error('No authentication token found')
+      }
+      
       const res = await fetch(`${API_BASE}/orders/admin/all`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       })
-      if (!res.ok) throw new Error('Failed to fetch orders')
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}))
+        throw new Error(errorData.detail || `HTTP ${res.status}: Failed to fetch orders`)
+      }
+      
       const data = await res.json()
       setOrders(data)
     } catch (err) {
-      show(err.message, 'error')
+      console.error('Fetch orders error:', err)
+      show(err.message || 'Erreur lors du chargement des commandes', 'error')
     } finally {
       setLoading(false)
     }
@@ -45,21 +58,29 @@ export default function AdminDashboard() {
   async function updateOrderStatus(orderId, newStatus) {
     try {
       const token = localStorage.getItem('token')
+      if (!token) {
+        throw new Error('No authentication token found')
+      }
+      
       const res = await fetch(`${API_BASE}/orders/${orderId}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ status: newStatus })
       })
       
-      if (!res.ok) throw new Error('Failed to update status')
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}))
+        throw new Error(errorData.detail || `HTTP ${res.status}: Failed to update status`)
+      }
       
       show(`Statut mis à jour: ${newStatus}`, 'success')
       fetchAllOrders()
     } catch (err) {
-      show(err.message, 'error')
+      console.error('Update status error:', err)
+      show(err.message || 'Erreur lors de la mise à jour du statut', 'error')
     }
   }
 
@@ -68,20 +89,28 @@ export default function AdminDashboard() {
     
     try {
       const token = localStorage.getItem('token')
+      if (!token) {
+        throw new Error('No authentication token found')
+      }
+      
       const res = await fetch(`${API_BASE}/orders/${orderId}/ship`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       })
       
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.detail || 'Failed to ship order')
+        const errorData = await res.json().catch(() => ({}))
+        throw new Error(errorData.detail || `HTTP ${res.status}: Failed to ship order`)
       }
       
       show('Commande expédiée avec succès', 'success')
       fetchAllOrders()
     } catch (err) {
-      show(err.message, 'error')
+      console.error('Ship order error:', err)
+      show(err.message || 'Erreur lors de l\'expédition', 'error')
     }
   }
 
@@ -90,17 +119,28 @@ export default function AdminDashboard() {
     
     try {
       const token = localStorage.getItem('token')
+      if (!token) {
+        throw new Error('No authentication token found')
+      }
+      
       const res = await fetch(`${API_BASE}/orders/${orderId}/deliver`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       })
       
-      if (!res.ok) throw new Error('Failed to mark as delivered')
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}))
+        throw new Error(errorData.detail || `HTTP ${res.status}: Failed to mark as delivered`)
+      }
       
       show('Commande marquée comme livrée', 'success')
       fetchAllOrders()
     } catch (err) {
-      show(err.message, 'error')
+      console.error('Mark delivered error:', err)
+      show(err.message || 'Erreur lors du marquage comme livrée', 'error')
     }
   }
 
@@ -109,20 +149,28 @@ export default function AdminDashboard() {
     
     try {
       const token = localStorage.getItem('token')
+      if (!token) {
+        throw new Error('No authentication token found')
+      }
+      
       const res = await fetch(`${API_BASE}/orders/${orderId}/refund`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       })
       
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.detail || 'Failed to refund order')
+        const errorData = await res.json().catch(() => ({}))
+        throw new Error(errorData.detail || `HTTP ${res.status}: Failed to refund order`)
       }
       
       show('Commande remboursée avec succès', 'success')
       fetchAllOrders()
     } catch (err) {
-      show(err.message, 'error')
+      console.error('Refund order error:', err)
+      show(err.message || 'Erreur lors du remboursement', 'error')
     }
   }
 
