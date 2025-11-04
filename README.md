@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# Ecom_qualite_dev
-=======
 # EcomNova - Plateforme E-commerce Moderne
 
 [![Tests](https://github.com/FLUMINOX7/EcomNova_qualite_dev/actions/workflows/test.yml/badge.svg)](https://github.com/FLUMINOX7/EcomNova_qualite_dev/actions/workflows/test.yml)
@@ -199,4 +196,3 @@ Développé dans le cadre du module Qualité & Développement logiciel, ce proje
 - 🟢 **Documentation** : Complète et à jour
 
 **Prêt pour la production** ✨
->>>>>>> develop
