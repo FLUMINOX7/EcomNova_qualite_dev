@@ -1,12 +1,12 @@
-# EcomNova API - Backend Endpoints
+# EcomNova API - Guide des Endpoints
 
-Cette branche (`feature/api-endpoints`) contient l'implémentation complète des endpoints API REST pour EcomNova.
+Ce guide détaille l'utilisation complète de l'API REST d'EcomNova.
 
 ## ⚠️ Prérequis Important
 
-**Python 3.11 ou 3.12 REQUIS** - FastAPI 0.95.2 et Pydantic 1.10.7 ne sont PAS compatibles avec Python 3.13+
+**Python 3.11 ou 3.12 REQUIS** - FastAPI 0.115.0 et Pydantic 2.10.4 ne sont PAS compatibles avec Python 3.13+
 
-### Solution rapide si vous avez Python 3.13:
+### Solution si vous avez Python 3.13:
 
 ```bash
 # Installer Python 3.11 avec pyenv
@@ -22,23 +22,24 @@ pip install -r requirements.txt
 
 ## 🚀 Démarrage Rapide
 
+**Option recommandée : Docker**
 ```bash
-# 1. Activer l'environnement virtuel
-source .venv/bin/activate
+# À la racine du projet
+docker compose up --build
 
-# 2. Configurer la base de données (si pas déjà fait)
-cd backend
-python create_db.py
-cd ..
-
-# 3. Démarrer le serveur
-python start_server.py
+# L'API sera accessible sur:
+# - API: http://localhost:8000
+# - Documentation interactive: http://localhost:8000/docs
+# - Documentation alternative: http://localhost:8000/redoc
 ```
 
-Le serveur sera accessible sur:
-- API: http://localhost:8000
-- Documentation interactive (Swagger): http://localhost:8000/docs
-- Documentation alternative (ReDoc): http://localhost:8000/redoc
+**Option locale :**
+```bash
+# Voir le guide détaillé : backend/README.md
+cd backend
+source .venv/bin/activate
+uvicorn backend.app:app --reload --port 8000
+```
 
 ## 📋 Endpoints Implémentés
 
@@ -79,6 +80,9 @@ Note: pour ces endpoints, le header d'auth attendu est `Authorization: Bearer <t
 - `POST /orders` - Créer une commande depuis le panier
 - `PUT /orders/{id}/status` - Mettre à jour le statut (admin uniquement)
 - `GET /orders/admin/all` - Toutes les commandes (admin uniquement)
+
+### Statistics (`/stats`)
+- `GET /stats` - Statistiques temps réel (produits, clients, commandes, satisfaction)
 
 ### System
 - `GET /health` - Health check
@@ -210,10 +214,11 @@ ModuleNotFoundError: No module named 'jose'
 
 ## 📝 Prochaines Étapes
 
-- [ ] Tests d'intégration complets
+- ✅ Tests d'intégration complets (33 tests actuels)
+- ✅ Interface React moderne avec statistiques
+- ✅ Système de paiement sécurisé
+- ✅ Dashboard administrateur
 - [ ] Rate limiting
-- [ ] Pagination des listes
 - [ ] Upload d'images produits
-- [ ] Système de paiement (Stripe/PayPal)
 - [ ] Notifications email
 - [ ] WebSockets pour updates temps réel
