@@ -54,6 +54,7 @@ export function CartProvider({ children }) {
             name: it.product_name,
             price_cents: it.unit_price_cents,
             image_url: it.product_image_url,
+            stock_qty: it.product_stock_qty,
           },
           quantity: it.quantity,
         }))
@@ -74,7 +75,7 @@ export function CartProvider({ children }) {
         const serverCart = await apiGetCart()
         const items = serverCart.items.map(it => ({
           itemId: it.id,
-          product: { id: it.product_id, name: it.product_name, price_cents: it.unit_price_cents, image_url: it.product_image_url },
+          product: { id: it.product_id, name: it.product_name, price_cents: it.unit_price_cents, image_url: it.product_image_url, stock_qty: it.product_stock_qty },
           quantity: it.quantity,
         }))
         setCart({ items })
@@ -143,7 +144,7 @@ export function CartProvider({ children }) {
         const serverCart = await apiGetCart()
         const items = serverCart.items.map(it => ({
           itemId: it.id,
-          product: { id: it.product_id, name: it.product_name, price_cents: it.unit_price_cents },
+          product: { id: it.product_id, name: it.product_name, price_cents: it.unit_price_cents, stock_qty: it.product_stock_qty },
           quantity: it.quantity,
         }))
         setCart({ items })

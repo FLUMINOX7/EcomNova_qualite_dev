@@ -23,6 +23,7 @@ class CartItemResponse(BaseModel):
     product_name: str
     product_image_url: Optional[str] = None
     unit_price_cents: int
+    product_stock_qty: int
     quantity: int
     total_price_cents: int
 

@@ -45,9 +45,25 @@ class CartRepository:
             CartItemModel.cart_user_id == user_id,
             CartItemModel.product_id == product_id
         ).first()
+
+        # Verify product and stock
+        product = self.db.query(ProductModel).filter(ProductModel.id == product_id).first()
+        if not product or not product.active:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Product is not available")
+
+        # Compute desired total quantity in cart for this product
+        current_qty = existing_item.quantity if existing_item else 0
+        desired_qty = current_qty + quantity
+        if desired_qty <= 0:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Quantity must be positive")
+        if desired_qty > product.stock_qty:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Insufficient stock. Only {product.stock_qty} left"
+            )
         
         if existing_item:
-            existing_item.quantity += quantity
+            existing_item.quantity = desired_qty
             self.db.commit()
             self.db.refresh(existing_item)
             return existing_item
@@ -56,7 +72,7 @@ class CartRepository:
                 id=str(uuid.uuid4()),
                 cart_user_id=user_id,
                 product_id=product_id,
-                quantity=quantity
+                quantity=desired_qty
             )
             self.db.add(new_item)
             self.db.commit()
@@ -72,7 +88,20 @@ class CartRepository:
         
         if not item:
             return None
-        
+
+        if quantity <= 0:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Quantity must be positive")
+
+        # Verify stock against product
+        product = self.db.query(ProductModel).filter(ProductModel.id == item.product_id).first()
+        if not product or not product.active:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Product is not available")
+        if quantity > product.stock_qty:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Insufficient stock. Only {product.stock_qty} left"
+            )
+
         item.quantity = quantity
         self.db.commit()
         self.db.refresh(item)

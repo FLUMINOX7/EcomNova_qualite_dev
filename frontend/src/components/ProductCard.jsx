@@ -8,6 +8,7 @@ export default function ProductCard({ product }) {
 
   const handleAddToCart = (e) => {
     e.preventDefault()
+    if (product.stock_qty === 0) return
     addToCart(product, 1)
     setAdded(true)
     setTimeout(() => setAdded(false), 2000)
@@ -42,6 +43,9 @@ export default function ProductCard({ product }) {
           <p className="price">
             {product.price_cents ? `${(product.price_cents / 100).toFixed(2)} €` : '—'}
           </p>
+          {product.stock_qty === 0 && (
+            <p style={{ color: '#ef4444', fontWeight: 600, marginTop: '0.25rem' }}>Rupture de stock</p>
+          )}
         </div>
       </Link>
       
@@ -55,8 +59,9 @@ export default function ProductCard({ product }) {
             fontSize: '0.9rem',
             padding: '0.6rem'
           }}
+          disabled={product.stock_qty === 0}
         >
-          {added ? '✓ Ajouté' : '+ Panier'}
+          {product.stock_qty === 0 ? 'Rupture' : (added ? '✓ Ajouté' : '+ Panier')}
         </button>
         <Link 
           to={`/product/${product.id}`}
