@@ -1,0 +1,81 @@
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useCart } from '../contexts/CartContext'
+
+export default function ProductCard({ product }) {
+  const { addToCart } = useCart()
+  const [added, setAdded] = useState(false)
+
+  const handleAddToCart = (e) => {
+    e.preventDefault()
+    if (product.stock_qty === 0) return
+    addToCart(product, 1)
+    setAdded(true)
+    setTimeout(() => setAdded(false), 2000)
+  }
+
+  return (
+    <div className="product-card">
+      <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+        <img
+          src={product.image_url || product.image || '/assets/placeholder.svg'}
+          alt={product.name}
+          onError={(e) => {
+            e.currentTarget.onerror = null
+            e.currentTarget.src = '/assets/placeholder.svg'
+          }}
+        />
+        <div className="product-body">
+          <h3>{product.name}</h3>
+          <p style={{ 
+            color: 'var(--text-secondary)', 
+            fontSize: '0.85rem', 
+            marginBottom: '1rem',
+            minHeight: '3em',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical'
+          }}>
+            {product.description || 'Produit technologique de pointe'}
+          </p>
+          <p className="price">
+            {product.price_cents ? `${(product.price_cents / 100).toFixed(2)} €` : '—'}
+          </p>
+          {product.stock_qty === 0 && (
+            <p style={{ color: '#ef4444', fontWeight: 600, marginTop: '0.25rem' }}>Rupture de stock</p>
+          )}
+        </div>
+      </Link>
+      
+      <div style={{ padding: '0 1.25rem 1.25rem 1.25rem', display: 'flex', gap: '0.5rem' }}>
+        <button 
+          onClick={handleAddToCart}
+          className="btn"
+          style={{ 
+            flex: 1, 
+            marginTop: 0,
+            fontSize: '0.9rem',
+            padding: '0.6rem'
+          }}
+          disabled={product.stock_qty === 0}
+          title={product.stock_qty === 0 ? 'Rupture de stock' : undefined}
+        >
+          {product.stock_qty === 0 ? 'Rupture' : (added ? '✓ Ajouté' : '+ Panier')}
+        </button>
+        <Link 
+          to={`/product/${product.id}`}
+          className="btn btn-secondary"
+          style={{ 
+            marginTop: 0,
+            fontSize: '0.9rem',
+            padding: '0.6rem 1rem'
+          }}
+        >
+          Détails
+        </Link>
+      </div>
+    </div>
+  )
+}

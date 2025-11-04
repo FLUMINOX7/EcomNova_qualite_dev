@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+env/
+venv/
+
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Pytest cache
+.pytest_cache/
+
+# Environment variables (contains sensitive data)
+.env
+*.env
+!.env.example
+
+# Editor and OS files
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+.DS_Store
+
+# Build outputs frontend
+frontend/dist/
+frontend/build/
