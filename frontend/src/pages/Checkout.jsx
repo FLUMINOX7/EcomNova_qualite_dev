@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../contexts/CartContext'
 import { useAuth } from '../contexts/AuthContext'
@@ -13,6 +13,61 @@ export default function Checkout() {
   
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  // Payment simulation state
+  const [cardName, setCardName] = useState('')
+  const [cardNumber, setCardNumber] = useState('')
+  const [expiry, setExpiry] = useState('') // MM/YY
+  const [cvv, setCvv] = useState('')
+
+  const digitsOnly = (s) => (s || '').replace(/\D/g, '')
+
+  // Luhn algorithm for card number
+  const isValidCardNumber = (num) => {
+    const digits = digitsOnly(num)
+    if (digits.length < 12) return false
+    let sum = 0
+    let shouldDouble = false
+    for (let i = digits.length - 1; i >= 0; i--) {
+      let d = parseInt(digits[i], 10)
+      if (shouldDouble) {
+        d *= 2
+        if (d > 9) d -= 9
+      }
+      sum += d
+      shouldDouble = !shouldDouble
+    }
+    return sum % 10 === 0
+  }
+
+  const isValidExpiry = (val) => {
+    // Expect MM/YY
+    const match = /^(0[1-9]|1[0-2])\/(\d{2})$/.exec(val)
+    if (!match) return false
+    const mm = parseInt(match[1], 10)
+    const yy = parseInt(match[2], 10)
+    const now = new Date()
+    const currentYY = now.getFullYear() % 100
+    const currentMM = now.getMonth() + 1
+    // Expired if year < current or same year but month < current
+    if (yy < currentYY) return false
+    if (yy === currentYY && mm < currentMM) return false
+    return true
+  }
+
+  const isValidCvv = (val) => /^\d{3,4}$/.test(val)
+
+  const cardNumberDisplay = useMemo(() => {
+    // Format as #### #### #### ####
+    const d = digitsOnly(cardNumber).slice(0, 19)
+    return d.replace(/(\d{4})(?=\d)/g, '$1 ').trim()
+  }, [cardNumber])
+
+  const canSubmit =
+    cardName.trim().length >= 2 &&
+    isValidCardNumber(cardNumber) &&
+    isValidExpiry(expiry) &&
+    isValidCvv(cvv) &&
+    !loading
 
   if (!isAuthenticated) {
     navigate('/auth')
@@ -110,9 +165,9 @@ export default function Checkout() {
           </div>
         </div>
 
-        {/* Right column - Delivery info */}
+        {/* Right column - Payment + Delivery info (simulation) */}
         <div>
-          <h2 style={{ marginBottom: '1rem' }}>Informations de livraison</h2>
+          <h2 style={{ marginBottom: '1rem' }}>Paiement (simulation)</h2>
           
           <div style={{ 
             background: 'var(--card-bg)', 
@@ -120,6 +175,95 @@ export default function Checkout() {
             borderRadius: '12px', 
             padding: '1.5rem' 
           }}>
+            <p style={{ 
+              background: 'rgba(56,189,248,0.08)',
+              border: '1px solid var(--border-glow)',
+              borderRadius: '8px',
+              padding: '0.75rem 1rem',
+              marginBottom: '1rem',
+              color: 'var(--text-secondary)'
+            }}>
+              Cette section simule un paiement CB. Aucune donnée de carte n’est envoyée au serveur.
+            </p>
+
+            <div style={{ display: 'grid', gap: '1rem' }}>
+              <div>
+                <label htmlFor="cardName" style={{ display: 'block', marginBottom: '.35rem' }}>Nom sur la carte</label>
+                <input
+                  id="cardName"
+                  type="text"
+                  value={cardName}
+                  onChange={(e) => setCardName(e.target.value)}
+                  placeholder="Jean Dupont"
+                  style={{ width: '100%' }}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="cardNumber" style={{ display: 'block', marginBottom: '.35rem' }}>Numéro de carte</label>
+                <input
+                  id="cardNumber"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="cc-number"
+                  value={cardNumberDisplay}
+                  onChange={(e) => setCardNumber(e.target.value)}
+                  placeholder="4242 4242 4242 4242"
+                  aria-invalid={cardNumber && !isValidCardNumber(cardNumber) ? 'true' : 'false'}
+                  style={{ width: '100%' }}
+                />
+                {cardNumber && !isValidCardNumber(cardNumber) && (
+                  <div role="alert" style={{ color: '#f87171', fontSize: '.9rem', marginTop: '.25rem' }}>
+                    Numéro de carte invalide
+                  </div>
+                )}
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label htmlFor="expiry" style={{ display: 'block', marginBottom: '.35rem' }}>Expiration (MM/AA)</label>
+                  <input
+                    id="expiry"
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="cc-exp"
+                    value={expiry}
+                    onChange={(e) => setExpiry(e.target.value.replace(/[^0-9/]/g, '').slice(0, 5))}
+                    placeholder="12/27"
+                    aria-invalid={expiry && !isValidExpiry(expiry) ? 'true' : 'false'}
+                    style={{ width: '100%' }}
+                  />
+                  {expiry && !isValidExpiry(expiry) && (
+                    <div role="alert" style={{ color: '#f87171', fontSize: '.9rem', marginTop: '.25rem' }}>
+                      Date d’expiration invalide
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor="cvv" style={{ display: 'block', marginBottom: '.35rem' }}>CVV</label>
+                  <input
+                    id="cvv"
+                    type="password"
+                    inputMode="numeric"
+                    autoComplete="cc-csc"
+                    value={cvv}
+                    onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                    placeholder="123"
+                    aria-invalid={cvv && !isValidCvv(cvv) ? 'true' : 'false'}
+                    style={{ width: '100%' }}
+                  />
+                  {cvv && !isValidCvv(cvv) && (
+                    <div role="alert" style={{ color: '#f87171', fontSize: '.9rem', marginTop: '.25rem' }}>
+                      CVV invalide (3 ou 4 chiffres)
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <hr style={{ border: 'none', borderTop: '1px solid var(--border-glow)' }} />
+
+              <h3 style={{ margin: '0.5rem 0 0.25rem 0' }}>Informations de livraison</h3>
             <div style={{ marginBottom: '1rem' }}>
               <strong>Email:</strong>
               <div style={{ color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
@@ -143,7 +287,7 @@ export default function Checkout() {
 
             <button 
               onClick={handleOrder}
-              disabled={loading}
+              disabled={!canSubmit}
               className="btn"
               style={{ width: '100%', fontSize: '1.1rem', padding: '1rem' }}
             >
@@ -156,8 +300,10 @@ export default function Checkout() {
               textAlign: 'center', 
               marginTop: '1rem' 
             }}>
-              Paiement sécurisé via EcomNova
+              Simulation de paiement — aucune donnée n’est transmise
             </p>
+            {/* End grid wrapper */}
+            </div>
           </div>
         </div>
       </div>
