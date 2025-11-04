@@ -4,6 +4,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 from backend.models_sql import DeliveryModel
 import uuid
+import time
 
 
 class DeliveryRepository:
@@ -27,7 +28,8 @@ class DeliveryRepository:
             carrier=carrier,
             tracking_number=tracking_number,
             address=address,
-            status=status
+            status=status,
+            created_at=time.time()
         )
         self.db.add(delivery)
         self.db.commit()
