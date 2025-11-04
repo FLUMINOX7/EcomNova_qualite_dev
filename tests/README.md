@@ -1,20 +1,47 @@
-# Tests
+# Tests — EcomNova
 
-This folder contains automated tests for the project.
+Tests automatisés pour le backend et le frontend.
 
-How to run tests locally:
+## 🧪 Lancer les Tests
 
-1. Activate the project's virtual environment (if any):
+### Backend (pytest)
 
-   source .venv/bin/activate
+```bash
+# À la racine du projet
+source .venv/bin/activate
+pytest
 
-2. Install dev dependencies:
+# Avec détails
+pytest -v
 
-   pip install -r requirements.txt
+# Tests spécifiques
+pytest tests/test_auth_endpoints.py
+pytest tests/test_product_endpoints.py
+```
 
-3. Run pytest:
+### Frontend (vitest)
 
-   pytest -q
+```bash
+cd frontend
+npm test
+```
 
-Notes
-- Keep tests fast and hermetic. Unit tests should not depend on a local database unless marked as integration tests.
+### Via Docker
+
+```bash
+# Tests backend dans le container
+docker compose exec backend python -m pytest -v
+
+# Avec coverage
+docker compose exec backend python -m pytest --cov=backend
+```
+
+## 📊 Couverture
+
+La couverture actuelle des tests :
+- Backend: 44 tests passent ✅
+- Frontend: 5 tests passent ✅
+
+## 📚 Documentation
+
+Voir [TESTS_README.md](./TESTS_README.md) pour la documentation complète des tests.
