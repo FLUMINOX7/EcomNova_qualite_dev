@@ -3,7 +3,8 @@ import { Routes, Route, Link } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { CartProvider, useCart } from './contexts/CartContext'
 import { NotificationProvider } from './contexts/NotificationContext'
-import Catalog from './pages/Catalog'
+import Home from './pages/Home'
+import Products from './pages/Products'
 import Product from './pages/Product'
 import Cart from './pages/Cart'
 import Auth from './pages/Auth'
@@ -22,6 +23,7 @@ function AppContent() {
       <header className="site-header">
         <Link to="/" className="logo">EcomNova</Link>
         <nav>
+          <Link to="/products">Produits</Link>
           <Link to="/cart">
             Panier {getTotalItems() > 0 && `(${getTotalItems()})`}
           </Link>
@@ -50,7 +52,8 @@ function AppContent() {
 
       <main className="site-main">
         <Routes>
-          <Route path="/" element={<Catalog />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/products" element={<Products />} />
           <Route path="/product/:id" element={<Product />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />

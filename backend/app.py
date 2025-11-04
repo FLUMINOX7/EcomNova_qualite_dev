@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from backend.db import ping_db, init_models
 from backend.dependencies import init_db, _engine
-from backend.routers import auth, products, cart, orders, core_integration, invoices, threads
+from backend.routers import auth, products, cart, orders, core_integration, invoices, threads, stats
 
 # Create FastAPI app
 app = FastAPI(
@@ -29,6 +29,7 @@ app.include_router(cart.router)
 app.include_router(orders.router)
 app.include_router(invoices.router)
 app.include_router(threads.router)
+app.include_router(stats.router)
 app.include_router(core_integration.router)
 
 
