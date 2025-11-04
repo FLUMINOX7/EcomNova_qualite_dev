@@ -31,6 +31,7 @@ def _build_cart_response(cart, db: Session) -> CartResponse:
                 product_name=product.name,
                 product_image_url=product.image_url,
                 unit_price_cents=product.price_cents,
+                product_stock_qty=product.stock_qty,
                 quantity=item.quantity,
                 total_price_cents=item_total
             ))
@@ -102,8 +103,9 @@ def update_cart_item(
     db: Session = Depends(get_session)
 ):
     """Update cart item quantity"""
-    repo = CartRepository(db)
-    item = repo.update_item_quantity(item_id, item_data.quantity, user_id)
+    # Validate stock against product before update to provide clearer error
+    cart_repo = CartRepository(db)
+    item = cart_repo.update_item_quantity(item_id, item_data.quantity, user_id)
     
     if not item:
         raise HTTPException(
@@ -112,7 +114,7 @@ def update_cart_item(
         )
     
     # Return updated cart
-    cart = repo.get_cart_with_items(user_id)
+    cart = cart_repo.get_cart_with_items(user_id)
     return _build_cart_response(cart, db)
 
 

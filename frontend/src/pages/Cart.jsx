@@ -69,6 +69,19 @@ export default function Cart() {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              {typeof item.product.stock_qty === 'number' && item.quantity >= item.product.stock_qty && (
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    color: '#ef4444',
+                    padding: '0.15rem 0.4rem',
+                    border: '1px solid rgba(239,68,68,0.4)',
+                    borderRadius: '6px'
+                  }}
+                >
+                  Max atteint
+                </span>
+              )}
               <button
                 onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.itemId)}
                 className="btn btn-secondary"
@@ -83,9 +96,16 @@ export default function Cart() {
                 onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.itemId)}
                 className="btn btn-secondary"
                 style={{ width: '40px', padding: '0.5rem' }}
+                disabled={typeof item.product.stock_qty === 'number' && item.quantity >= item.product.stock_qty}
+                title={typeof item.product.stock_qty === 'number' && item.quantity >= item.product.stock_qty ? 'Max atteint' : undefined}
               >
                 +
               </button>
+              {typeof item.product.stock_qty === 'number' && (
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                  Stock: {item.product.stock_qty}
+                </span>
+              )}
             </div>
 
             <div style={{ textAlign: 'right', minWidth: '100px' }}>
