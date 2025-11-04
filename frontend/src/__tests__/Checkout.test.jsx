@@ -40,6 +40,36 @@ function setupAuthAndCart() {
       { product: { id: 'p1', name: 'Produit 1', price_cents: 1000 }, quantity: 2 }
     ]
   }))
+  
+  // Mock fetch globally to prevent cart sync errors
+  global.fetch = vi.fn((url) => {
+    // Mock cart GET request
+    if (url.includes('/cart')) {
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({
+          items: [
+            { product: { id: 'p1', name: 'Produit 1', price_cents: 1000 }, quantity: 2 }
+          ]
+        })
+      })
+    }
+    // Mock payment endpoint
+    if (url.includes('/pay')) {
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ 
+          id: 'payment123',
+          succeeded: true 
+        })
+      })
+    }
+    // Default
+    return Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({})
+    })
+  })
 }
 
 function renderCheckout() {
@@ -83,17 +113,6 @@ describe('Checkout (payment simulation)', () => {
 
   it('submits and shows success after valid inputs', async () => {
     const { createOrder } = await import('../utils/api')
-    
-    // Mock the payment endpoint
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ 
-          id: 'payment123',
-          succeeded: true 
-        })
-      })
-    )
 
     renderCheckout()
     fireEvent.change(screen.getByLabelText(/Nom sur la carte/i), { target: { value: 'Jean Dupont' } })
