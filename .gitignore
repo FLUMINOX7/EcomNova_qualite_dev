@@ -8,6 +8,12 @@ __pycache__/
 env/
 venv/
 
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 # Distribution / packaging
 build/
 dist/
@@ -26,4 +32,8 @@ dist/
 .idea/
 *.swp
 Thumbs.db
-.
+.DS_Store
+
+# Build outputs frontend
+frontend/dist/
+frontend/build/
