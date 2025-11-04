@@ -10,7 +10,20 @@ vi.mock('../utils/api', async () => {
   const actual = await vi.importActual('../utils/api')
   return {
     ...actual,
-    createOrder: vi.fn().mockResolvedValue({ id: 'o1' })
+    createOrder: vi.fn().mockResolvedValue({ 
+      id: 'o1',
+      items: [
+        { 
+          id: 'item1', 
+          product_id: 'p1', 
+          name: 'Produit 1', 
+          unit_price_cents: 1000, 
+          quantity: 2,
+          total_price_cents: 2000
+        }
+      ],
+      total_price_cents: 2000
+    })
   }
 })
 
