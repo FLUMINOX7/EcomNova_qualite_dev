@@ -9,6 +9,9 @@ import Cart from './pages/Cart'
 import Auth from './pages/Auth'
 import Checkout from './pages/Checkout'
 import Profile from './pages/Profile'
+import Orders from './pages/Orders'
+import AdminDashboard from './pages/AdminDashboard'
+import Support from './pages/Support'
 
 function AppContent() {
   const { isAuthenticated, user, logout } = useAuth()
@@ -24,6 +27,13 @@ function AppContent() {
           </Link>
           {isAuthenticated ? (
             <>
+              <Link to="/orders">Commandes</Link>
+              <Link to="/support">Support</Link>
+              {user?.is_admin && (
+                <Link to="/admin" style={{ color: 'var(--galaxy-purple)' }}>
+                  🛡️ Admin
+                </Link>
+              )}
               <Link to="/profile">Profil</Link>
               <span style={{ color: 'var(--galaxy-cyan)' }}>
                 {user?.email}
@@ -46,6 +56,9 @@ function AppContent() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/support" element={<Support />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </main>
 

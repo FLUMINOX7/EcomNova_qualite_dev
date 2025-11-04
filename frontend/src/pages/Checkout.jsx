@@ -83,16 +83,41 @@ export default function Checkout() {
     setLoading(true)
 
     try {
-      await createOrder()
+      // 1. Create order from cart
+      const order = await createOrder()
+      
+      // 2. Pay the order with card details
+      const token = localStorage.getItem('token')
+      const [expMonth, expYear] = expiry.split('/')
+      
+      const paymentRes = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/orders/${order.id}/pay`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          card_number: digitsOnly(cardNumber),
+          exp_month: parseInt(expMonth, 10),
+          exp_year: parseInt('20' + expYear, 10),
+          cvc: cvv
+        })
+      })
+      
+      if (!paymentRes.ok) {
+        const error = await paymentRes.json()
+        throw new Error(error.detail || 'Paiement refusé')
+      }
+      
       setSuccess(true)
       clearCart()
-      show('Commande confirmée avec succès !', 'success')
+      show('Commande payée avec succès !', 'success')
       
       setTimeout(() => {
-        navigate('/')
+        navigate('/orders')
       }, 3000)
     } catch (err) {
-      show(err.message || 'Erreur lors de la commande', 'error')
+      show(err.message || 'Erreur lors du paiement', 'error')
     } finally {
       setLoading(false)
     }
