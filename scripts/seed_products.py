@@ -102,6 +102,142 @@ DEMO_PRODUCTS = [
         "stock": 18,
         "category": "AI",
         "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400"
+    },
+    {
+        "name": "PhotonBeam Laser Projector",
+        "description": "Projecteur laser 4K ultra-courte focale avec correction automatique et projection jusqu'à 300 pouces.",
+        "price": 1799.99,
+        "stock": 22,
+        "category": "Displays",
+        "image": "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=400"
+    },
+    {
+        "name": "SkyGuard Security Drone",
+        "description": "Drone de surveillance autonome avec détection IA, vision nocturne et patrouille programmable 24/7.",
+        "price": 2499.99,
+        "stock": 14,
+        "category": "Drones",
+        "image": "https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=400"
+    },
+    {
+        "name": "MindSync Sleep Optimizer",
+        "description": "Système d'optimisation du sommeil avec ondes cérébrales, aromathérapie intelligente et réveil progressif.",
+        "price": 699.99,
+        "stock": 35,
+        "category": "Health",
+        "image": "https://images.unsplash.com/photo-1541480551145-2370a440d585?w=400"
+    },
+    {
+        "name": "HyperCore Gaming Rig",
+        "description": "PC gaming ultra-puissant avec RTX 5090, refroidissement liquide et RGB synchronisé. Prêt pour le gaming 8K.",
+        "price": 4299.99,
+        "stock": 9,
+        "category": "Computing",
+        "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400"
+    },
+    {
+        "name": "SmartFabric Wearable Tech",
+        "description": "Vêtement intelligent avec capteurs biométriques intégrés, thermorégulation et connectivité sans fil.",
+        "price": 449.99,
+        "stock": 50,
+        "category": "Health",
+        "image": "https://images.unsplash.com/photo-1556906781-9a412961c28c?w=400"
+    },
+    {
+        "name": "QuantumShield VPN Router",
+        "description": "Routeur VPN quantique avec chiffrement inviolable, pare-feu IA et débit 10 Gbps.",
+        "price": 899.99,
+        "stock": 28,
+        "category": "Networking",
+        "image": "https://images.unsplash.com/photo-1606904825846-647eb07f5be2?w=400"
+    },
+    {
+        "name": "AirPure Nano Purifier",
+        "description": "Purificateur d'air à nanofiltration éliminant 99.99% virus, bactéries et particules. Silencieux et intelligent.",
+        "price": 549.99,
+        "stock": 42,
+        "category": "Health",
+        "image": "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400"
+    },
+    {
+        "name": "NeuralLink Keyboard Pro",
+        "description": "Clavier avec interface neuronale optionnelle, touches mécaniques personnalisables et apprentissage de frappe IA.",
+        "price": 349.99,
+        "stock": 60,
+        "category": "Neural Tech",
+        "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400"
+    },
+    {
+        "name": "InfinityCharge Power Bank",
+        "description": "Batterie externe solaire 50000mAh avec charge rapide 100W, ports multiples et écran OLED.",
+        "price": 199.99,
+        "stock": 80,
+        "category": "Energy",
+        "image": "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400"
+    },
+    {
+        "name": "CrystalSound ANC Headphones",
+        "description": "Casque audio avec réduction de bruit active adaptative, son spatial 3D et autonomie 60h.",
+        "price": 499.99,
+        "stock": 45,
+        "category": "Audio",
+        "image": "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400"
+    },
+    {
+        "name": "VisionPro AR Glasses",
+        "description": "Lunettes de réalité augmentée légères avec affichage rétinien, commande vocale et traduction en temps réel.",
+        "price": 2799.99,
+        "stock": 16,
+        "category": "VR",
+        "image": "https://images.unsplash.com/photo-1617953141905-b27fb1f17d88?w=400"
+    },
+    {
+        "name": "SecureVault Biometric Safe",
+        "description": "Coffre-fort biométrique avec reconnaissance faciale, empreinte digitale et alerte intrusion instantanée.",
+        "price": 1299.99,
+        "stock": 12,
+        "category": "Security",
+        "image": "https://images.unsplash.com/photo-1565372195458-9de0b320ef04?w=400"
+    },
+    {
+        "name": "SmartDesk Pro Workstation",
+        "description": "Bureau intelligent à hauteur variable avec chargement sans fil, monitoring posture et éclairage adaptatif.",
+        "price": 1599.99,
+        "stock": 8,
+        "category": "Other",
+        "image": "https://images.unsplash.com/photo-1595515106969-1ce29566ff1c?w=400"
+    },
+    {
+        "name": "HyperLoop Mini Transport",
+        "description": "Système de transport personnel à lévitation magnétique pour déplacements urbains rapides et silencieux.",
+        "price": 8499.99,
+        "stock": 4,
+        "category": "Other",
+        "image": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400"
+    },
+    {
+        "name": "OxygenBoost Portable Generator",
+        "description": "Générateur d'oxygène portable médical avec concentrateur à 95%, batterie 8h et mode silencieux.",
+        "price": 1899.99,
+        "stock": 11,
+        "category": "Medical",
+        "image": "https://images.unsplash.com/photo-1584982751601-97dcc096659c?w=400"
+    },
+    {
+        "name": "FlexScreen Foldable Monitor",
+        "description": "Écran pliable 27 pouces OLED 4K, ultra-fin, se roule dans son boîtier. Parfait pour nomades digitaux.",
+        "price": 1999.99,
+        "stock": 19,
+        "category": "Displays",
+        "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400"
+    },
+    {
+        "name": "NanoClean Self-Cleaning Robot",
+        "description": "Robot aspirateur-laveur avec stérilisation UV, mapping 3D et vidange automatique. 90 jours d'autonomie.",
+        "price": 799.99,
+        "stock": 33,
+        "category": "AI",
+        "image": "https://images.unsplash.com/photo-1563207153-f403bf289096?w=400"
     }
 ]
 
