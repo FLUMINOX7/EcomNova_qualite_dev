@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ecomnova-db
+    environment:
+      POSTGRES_DB: ecomnova
+      POSTGRES_USER: ecomnova_user
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5433:5432"  # Changed to avoid conflict with local Postgres
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecomnova_user -d ecomnova"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: ecomnova-backend
+    env_file:
+      - backend/.env
+    environment:
+      DATABASE_URL: postgresql://ecomnova_user:1234@db:5432/ecomnova
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev-secret-key-change-in-production}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    container_name: ecomnova-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  db_data: {}

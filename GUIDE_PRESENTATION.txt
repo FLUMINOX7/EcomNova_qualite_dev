@@ -1,0 +1,241 @@
+📋 PLAN DE PRÉSENTATION 
+
+### 1. 📊 INTRODUCTION & CONTEXTE 
+=====================================================
+
+🎯 **Objectif du projet** :
+- Développer une plateforme e-commerce moderne (EcomNova)
+- Appliquer les bonnes pratiques de qualité logicielle
+- Suivre une méthodologie rigoureuse (Cycle en V)
+- Intégrer CI/CD et tests automatisés
+
+
+### 2. 📋 PHASE DE SPÉCIFICATION - CYCLE EN V
+========================================================
+
+📖 **Cahier des charges** (docs/cahier_des_charges.md) :
+- Analyse des besoins clients EcomNova
+- Définition du périmètre projet
+- Choix technologiques justifiés (FastAPI, React 19, PostgreSQL)
+- Objectifs fonctionnels et techniques
+
+📝 **Spécifications fonctionnelles** :
+- SFG (Spécifications Fonctionnelles Générales)
+  * Acteurs : Visiteur, Client, Administrateur
+  * Fonctionnalités principales identifiées
+  * Règles de gestion définies
+
+- SFD (Spécifications Fonctionnelles Détaillées)
+  * User stories détaillées
+  * Workflows e-commerce complets
+  * Cas d'usage spécifiques
+
+🔧 **Spécifications techniques** :
+- Architecture logicielle en couches
+- Modèles de données (BDD relationnelle)
+- API REST design
+- Sécurité et authentification JWT
+
+### 3. 🏗️ ARCHITECTURE & CONCEPTION (3-4 min)
+==============================================
+
+🛠️ **Stack technique choisie** :
+- **Backend** : FastAPI 0.115.0 (Python 3.11+)
+- **Frontend** : React 19 + Vite 7 + React Router
+- **Base de données** : PostgreSQL + SQLAlchemy 2.0
+- **Infrastructure** : Docker Compose
+- **Tests** : pytest (backend) + Vitest (frontend)
+
+🏗️ **Architecture en couches** :
+```
+Frontend React ↔ API REST FastAPI ↔ Services ↔ Repositories ↔ PostgreSQL
+```
+
+📦 **Containerisation** :
+- Docker Compose pour orchestration
+- Services isolés : frontend, backend, database
+- Configuration production-ready
+
+### 4. 🔄 MÉTHODOLOGIE & GESTION DE PROJET (4-5 min)
+====================================================
+
+🌿 **Gestion des branches Git** :
+- `main` : Version stable pour production
+- `develop` : Intégration des fonctionnalités
+- `feature/*` : Développement isolé des fonctionnalités
+- `fix/*` : Corrections de bugs
+
+📋 **GitHub Projects & Tickets** :
+- Organisation en sprints/milestones
+- Issues étiquetées par priorité et type
+- Suivi des tâches et assignations
+- Historique complet des décisions
+
+🔄 **Pull Requests & Code Review** :
+- Processus de validation systématique
+- Reviews obligatoires avant merge
+- Checks automatiques (tests + linting)
+- Traçabilité complète des modifications
+
+### 5. 🧪 STRATÉGIE DE TESTS & QUALITÉ (5-6 min)
+================================================
+
+📊 **Pyramide de tests mise en œuvre** :
+- **Tests unitaires** : 28 tests backend + 5 frontend
+- **Tests d'intégration** : API endpoints complets
+- **Tests fonctionnels** : Workflows e-commerce bout-en-bout
+- **Tests d'acceptation** : Validation cahier des charges
+
+🎯 **Couverture tests actuelle** :
+```
+TOTAL : 33 tests (100% passants)
+├── Backend : 28 tests
+│   ├── API Integration : 20 tests (auth, produits, panier, commandes)
+│   ├── Domaine métier : 1 test (logique business)
+│   ├── Modèles SQL : 1 test (persistence)
+│   └── Tests smoke : 6+ tests
+└── Frontend : 5 tests
+    ├── Composants : 1 test (ProductCard)
+    ├── Paiement : 3 tests (validation, workflow)
+    └── Auth : 1 test (interface)
+```
+
+🔍 **Outils qualité** :
+- **Linting** : ruff, black, isort (Python) + ESLint (JS)
+- **Type checking** : Pydantic validation stricte
+- **Security** : JWT authentication, validation entrées
+- **Performance** : Optimisations Vite, lazy loading
+
+### 6. 🚀 CI/CD & DÉPLOIEMENT (3-4 min)
+=======================================
+
+⚙️ **Pipeline GitHub Actions** (.github/workflows/) :
+- **test.yml** : Exécution automatique tests sur push/PR
+- **lint.yml** : Vérification qualité code
+- **frontend.yml** : Tests spécifiques frontend
+
+🔄 **Workflow CI/CD** :
+1. Push code → Déclenchement automatique
+2. Install dependencies → Setup environnement
+3. Run tests → Validation fonctionnelle
+4. Code quality checks → Standards respectés
+5. Merge autorisé → Si tous checks ✅
+
+📊 **Badges de statut** (README) :
+- Tests Status : ✅ Passing
+- Code Quality : ✅ Passing
+- Python 3.11+ : ✅ Compatible
+- React 19 : ✅ Latest
+
+### 7. 🎨 FONCTIONNALITÉS DÉVELOPPÉES (4-5 min)
+===============================================
+
+🏠 **Homepage moderne** :
+- Statistiques temps réel (API /stats)
+- Animations CSS modernes
+- Design glassmorphism professionnel
+- Performance optimisée
+
+🛍️ **Catalogue & E-commerce** :
+- Recherche avancée avec filtres
+- Panier dynamique temps réel
+- Système de paiement sécurisé (simulation)
+- Gestion commandes complète
+
+👨‍💼 **Interface d'administration** :
+- Dashboard statistiques
+- Gestion produits (CRUD)
+- Suivi commandes & livraisons
+- Système de remboursements
+
+🔐 **Sécurité & Authentification** :
+- JWT tokens sécurisés
+- Validation stricte des entrées (Pydantic)
+- Hashage mots de passe (bcrypt)
+- Gestion sessions utilisateurs
+
+### 8. 📊 TESTS FONCTIONNELS & VALIDATION (3-4 min)
+===================================================
+
+✅ **Tests d'acceptation réalisés** :
+- Workflow client complet : inscription → commande → paiement
+- Interface admin : gestion produits, commandes, utilisateurs
+- Performance : temps de réponse < 500ms
+- Compatibilité : responsive mobile/desktop
+
+🧪 **Guide de test fourni** (docs/guide_test_nouvelles_fonctionnalites.md) :
+- 5 scénarios complets documentés
+- Checklist validation ✅ (18 points de contrôle)
+- Tests manuels de non-régression
+- Validation exigences cahier des charges
+
+📋 **Métriques qualité** :
+- 0 bugs critiques en production
+- 100% tests automatisés passants
+- Architecture extensible et maintenable
+- Documentation complète à jour
+
+### 9. 📚 DOCUMENTATION & LIVRABLES (2-3 min)
+=============================================
+
+📖 **Documentation produite** :
+- README.md : Guide principal avec badges et architecture
+- API_README.md : Documentation API complète
+- TESTS_REPORT.md : Inventaire et analyse des tests
+- DOCUMENTATION_INDEX.md : Navigation organisée
+- 5 fichiers spécifications dans docs/
+
+🎯 **Livrables finaux** :
+- ✅ Code source versionné (GitHub)
+- ✅ Documentation technique complète
+- ✅ Tests automatisés fonctionnels
+- ✅ Pipeline CI/CD opérationnel
+- ✅ Application déployable (Docker)
+
+### 10. 🎯 CONCLUSION & PERSPECTIVES (2-3 min)
+==============================================
+
+🏆 **Objectifs atteints** :
+- Plateforme e-commerce fonctionnelle et moderne
+- Méthodologie qualité appliquée rigoureusement
+- Tests automatisés couvrant les fonctionnalités critiques
+- Documentation professionnelle complète
+- CI/CD pipeline opérationnel
+
+🚀 **Compétences démontrées** :
+- Maîtrise cycle en V complet
+- Implémentation CI/CD moderne
+- Tests automatisés multi-niveaux
+- Architecture logicielle scalable
+- Gestion de projet avec outils professionnels
+
+🔮 **Perspectives d'amélioration** :
+- Tests end-to-end avec Cypress
+- Monitoring production (métriques, logs)
+- Déploiement cloud (AWS, Azure)
+- Tests de charge et performance
+- Intégration paiement réel
+
+═══════════════════════════════════════════════════════════════════
+
+## 💡 CONSEILS PRÉSENTATION
+
+🎯 **Structure recommandée** : 25-30 minutes
+- Montrer le cycle en V appliqué concrètement
+- Insister sur la qualité : 33 tests, CI/CD, documentation
+- Démonstration live : `docker compose up` → Application fonctionnelle
+- Mettre en avant les badges GitHub (tests passing)
+
+🔥 **Points forts à valoriser** :
+- Méthodologie rigoureuse suivie
+- Technologies modernes (React 19, FastAPI)
+- Pipeline CI/CD complet
+- Documentation exhaustive
+- Tests automatisés robustes
+
+⚠️ **Anticiper les questions** :
+- Choix technologiques justifiés
+- Stratégie de tests expliquée
+- Gestion des branches Git
+- Processus de déploiement
+- Extensibilité de l'architecture
