@@ -25,6 +25,14 @@ source .venv/bin/activate
 
 ### 2. Démarrer l'API
 
+#### Option A: Avec Docker (recommandé)
+
+```bash
+docker compose up --build
+```
+
+#### Option B: Local
+
 ```bash
 export DATABASE_URL='postgresql://ecomnova_user:1234@localhost:5432/ecomnova'
 uvicorn backend.app:app --host 127.0.0.1 --port 8000 --reload

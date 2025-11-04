@@ -17,7 +17,7 @@ git clone https://github.com/FLUMINOX7/EcomNova_qualite_dev.git
 cd EcomNova_qualite_dev
 
 # Lancer tous les services (DB + Backend + Frontend)
-docker-compose up --build
+docker compose up --build
 
 # Accéder aux services
 # Frontend: http://localhost:8080
@@ -28,19 +28,19 @@ docker-compose up --build
 **Commandes utiles:**
 ```bash
 # Lancer en arrière-plan
-docker-compose up -d
+docker compose up -d
 
 # Voir les logs
-docker-compose logs -f
+docker compose logs -f
 
 # Arrêter les services
-docker-compose down
+docker compose down
 
 # Nettoyer complètement (⚠️ supprime les données)
-docker-compose down -v
+docker compose down -v
 
 # Seed la base avec des produits démo
-docker-compose exec backend python scripts/seed_products.py
+docker compose exec backend python scripts/seed_products.py
 ```
 
 ### Option 2 : Installation Locale
