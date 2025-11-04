@@ -60,6 +60,7 @@ export default function ProductCard({ product }) {
             padding: '0.6rem'
           }}
           disabled={product.stock_qty === 0}
+          title={product.stock_qty === 0 ? 'Rupture de stock' : undefined}
         >
           {product.stock_qty === 0 ? 'Rupture' : (added ? '✓ Ajouté' : '+ Panier')}
         </button>
