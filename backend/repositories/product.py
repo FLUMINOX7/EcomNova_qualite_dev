@@ -88,3 +88,13 @@ class ProductRepository:
         product.stock_qty -= quantity
         self.db.commit()
         return True
+    
+    def increase_stock(self, product_id: str, quantity: int) -> bool:
+        """Increase product stock (for cancellations/refunds)"""
+        product = self.get_product_by_id(product_id)
+        if not product:
+            return False
+        
+        product.stock_qty += quantity
+        self.db.commit()
+        return True

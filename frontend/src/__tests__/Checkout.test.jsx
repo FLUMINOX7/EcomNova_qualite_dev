@@ -10,7 +10,20 @@ vi.mock('../utils/api', async () => {
   const actual = await vi.importActual('../utils/api')
   return {
     ...actual,
-    createOrder: vi.fn().mockResolvedValue({ id: 'o1' })
+    createOrder: vi.fn().mockResolvedValue({ 
+      id: 'o1',
+      items: [
+        { 
+          id: 'item1', 
+          product_id: 'p1', 
+          name: 'Produit 1', 
+          unit_price_cents: 1000, 
+          quantity: 2,
+          total_price_cents: 2000
+        }
+      ],
+      total_price_cents: 2000
+    })
   }
 })
 
@@ -27,6 +40,36 @@ function setupAuthAndCart() {
       { product: { id: 'p1', name: 'Produit 1', price_cents: 1000 }, quantity: 2 }
     ]
   }))
+  
+  // Mock fetch globally to prevent cart sync errors
+  global.fetch = vi.fn((url) => {
+    // Mock cart GET request
+    if (url.includes('/cart')) {
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({
+          items: [
+            { product: { id: 'p1', name: 'Produit 1', price_cents: 1000 }, quantity: 2 }
+          ]
+        })
+      })
+    }
+    // Mock payment endpoint
+    if (url.includes('/pay')) {
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ 
+          id: 'payment123',
+          succeeded: true 
+        })
+      })
+    }
+    // Default
+    return Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({})
+    })
+  })
 }
 
 function renderCheckout() {
@@ -82,6 +125,6 @@ describe('Checkout (payment simulation)', () => {
     await waitFor(() => {
       expect(createOrder).toHaveBeenCalled()
     })
-    expect(screen.getByText(/Commande confirmée/i)).toBeInTheDocument()
+    expect(screen.getByText(/Commande payée avec succès/i)).toBeInTheDocument()
   })
 })
