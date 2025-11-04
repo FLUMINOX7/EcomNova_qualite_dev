@@ -70,6 +70,17 @@ describe('Checkout (payment simulation)', () => {
 
   it('submits and shows success after valid inputs', async () => {
     const { createOrder } = await import('../utils/api')
+    
+    // Mock the payment endpoint
+    global.fetch = vi.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ 
+          id: 'payment123',
+          succeeded: true 
+        })
+      })
+    )
 
     renderCheckout()
     fireEvent.change(screen.getByLabelText(/Nom sur la carte/i), { target: { value: 'Jean Dupont' } })
@@ -82,6 +93,6 @@ describe('Checkout (payment simulation)', () => {
     await waitFor(() => {
       expect(createOrder).toHaveBeenCalled()
     })
-    expect(screen.getByText(/Commande confirmée/i)).toBeInTheDocument()
+    expect(screen.getByText(/Commande payée avec succès/i)).toBeInTheDocument()
   })
 })
