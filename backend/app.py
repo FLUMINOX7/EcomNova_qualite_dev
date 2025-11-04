@@ -2,7 +2,7 @@ from __future__ import annotations
 import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from backend.db import ping_db
+from backend.db import ping_db, init_models
 from backend.dependencies import init_db, _engine
 from backend.routers import auth, products, cart, orders, core_integration, invoices, threads
 
@@ -36,6 +36,14 @@ app.include_router(core_integration.router)
 def startup_event():
     """Initialize database on startup"""
     init_db()
+    # Ensure all SQLAlchemy models are created (idempotent)
+    try:
+        from backend.dependencies import _engine as engine
+        if engine is not None:
+            init_models(engine)
+    except Exception:
+        # Don't block app startup if model init fails; ping-db endpoint will reflect status
+        pass
 
 
 @app.on_event("shutdown")
