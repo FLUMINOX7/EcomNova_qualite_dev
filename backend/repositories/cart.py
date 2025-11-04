@@ -2,7 +2,8 @@
 from __future__ import annotations
 from typing import Optional
 from sqlalchemy.orm import Session
-from backend.models_sql import CartModel, CartItemModel, ProductModel
+from backend.models_sql import CartModel, CartItemModel, ProductModel, UserModel
+from fastapi import HTTPException, status
 import uuid
 import time
 
@@ -15,6 +16,15 @@ class CartRepository:
     
     def get_or_create_cart(self, user_id: str) -> CartModel:
         """Get user's cart or create if doesn't exist"""
+        # First verify the user exists
+        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User not found. Please log in again.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
         cart = self.db.query(CartModel).filter(CartModel.user_id == user_id).first()
         if not cart:
             cart = CartModel(

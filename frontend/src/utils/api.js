@@ -19,8 +19,23 @@ async function request(path, opts = {}) {
   })
   
   if (!res.ok) {
+    // Handle 401 Unauthorized - token expired or user deleted
+    if (res.status === 401) {
+      // Clear auth data
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      
+      // Create a custom error that components can detect
+      const error = new Error('Session expired. Please log in again.')
+      error.status = 401
+      error.isAuthError = true
+      throw error
+    }
+    
     const text = await res.text()
-    throw new Error(`${res.status} ${res.statusText}: ${text}`)
+    const error = new Error(`${res.status} ${res.statusText}: ${text}`)
+    error.status = res.status
+    throw error
   }
   
   try {
