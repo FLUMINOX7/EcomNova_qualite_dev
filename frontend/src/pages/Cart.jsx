@@ -83,9 +83,15 @@ export default function Cart() {
                 onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.itemId)}
                 className="btn btn-secondary"
                 style={{ width: '40px', padding: '0.5rem' }}
+                disabled={typeof item.product.stock_qty === 'number' && item.quantity >= item.product.stock_qty}
               >
                 +
               </button>
+              {typeof item.product.stock_qty === 'number' && (
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                  Stock: {item.product.stock_qty}
+                </span>
+              )}
             </div>
 
             <div style={{ textAlign: 'right', minWidth: '100px' }}>
