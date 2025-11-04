@@ -131,6 +131,11 @@ export function createOrder() {
   })
 }
 
+// Statistics for homepage
+export function getStats() {
+  return request('/stats')
+}
+
 export default {
   fetchProducts,
   fetchProduct,
@@ -143,6 +148,7 @@ export default {
   addCartItem,
   updateCartItem,
   removeCartItem,
-  createOrder
+  createOrder,
+  getStats
 }
 
