@@ -36,7 +36,7 @@
 - API REST design
 - Sécurité et authentification JWT
 
-### 3. 🏗️ ARCHITECTURE & CONCEPTION (3-4 min)
+### 3. 🏗️ ARCHITECTURE & CONCEPTION
 ==============================================
 
 🛠️ **Stack technique choisie** :
