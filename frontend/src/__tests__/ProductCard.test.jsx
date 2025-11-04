@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
 import { CartProvider } from '../contexts/CartContext'
 import { AuthProvider } from '../contexts/AuthContext'
+import { NotificationProvider } from '../contexts/NotificationContext'
 
 const sample = {
   id: 'p1',
@@ -16,11 +17,13 @@ describe('ProductCard', () => {
   it('renders name and price', () => {
     render(
       <MemoryRouter>
-        <AuthProvider>
-          <CartProvider>
-            <ProductCard product={sample} />
-          </CartProvider>
-        </AuthProvider>
+        <NotificationProvider>
+          <AuthProvider>
+            <CartProvider>
+              <ProductCard product={sample} />
+            </CartProvider>
+          </AuthProvider>
+        </NotificationProvider>
       </MemoryRouter>
     )
     expect(screen.getByText(/QuantumCore X1/)).toBeInTheDocument()

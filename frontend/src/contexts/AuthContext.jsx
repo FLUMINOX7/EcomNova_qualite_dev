@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import { getMe } from '../utils/api'
 
 const AuthContext = createContext(null)
 
@@ -8,14 +9,34 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Load token from localStorage on mount
+    // Load token from localStorage on mount and verify it
     const savedToken = localStorage.getItem('token')
     const savedUser = localStorage.getItem('user')
     if (savedToken && savedUser) {
       setToken(savedToken)
       setUser(JSON.parse(savedUser))
+      
+      // Verify the token is still valid by fetching user data
+      getMe()
+        .then(userData => {
+          // Update user data from server
+          setUser(userData)
+          localStorage.setItem('user', JSON.stringify(userData))
+        })
+        .catch(err => {
+          // Token invalid or user doesn't exist anymore
+          if (err.isAuthError || err.status === 401) {
+            // Clear invalid session
+            setUser(null)
+            setToken(null)
+            localStorage.removeItem('token')
+            localStorage.removeItem('user')
+          }
+        })
+        .finally(() => setLoading(false))
+    } else {
+      setLoading(false)
     }
-    setLoading(false)
   }, [])
 
   const login = (userData, authToken) => {

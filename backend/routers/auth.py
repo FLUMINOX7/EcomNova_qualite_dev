@@ -84,8 +84,9 @@ def get_current_user(
     
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found. Please log in again.",
+            headers={"WWW-Authenticate": "Bearer"},
         )
     
     return UserResponse.from_orm(user)
@@ -99,6 +100,16 @@ def update_current_user(
 ):
     """Update current authenticated user's personal information"""
     repo = UserRepository(db)
+    
+    # First check if user exists
+    existing_user = repo.get_user_by_id(user_id)
+    if not existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found. Please log in again.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
     try:
         user = repo.update_user(
             user_id,
@@ -111,6 +122,10 @@ def update_current_user(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found. Please log in again.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
     return UserResponse.from_orm(user)

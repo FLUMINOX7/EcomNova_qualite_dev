@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { useAuth } from './AuthContext'
+import { useNotify } from './NotificationContext'
 import { getCart as apiGetCart, addCartItem, updateCartItem, removeCartItem } from '../utils/api'
 
 const CartContext = createContext(null)
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState({ items: [] })
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, logout } = useAuth()
+  const { show } = useNotify()
 
   useEffect(() => {
     // Load cart from localStorage
@@ -20,6 +22,18 @@ export function CartProvider({ children }) {
     // Save cart to localStorage whenever it changes
     localStorage.setItem('cart', JSON.stringify(cart))
   }, [cart])
+
+  // Handle API errors (especially 401)
+  const handleApiError = (error, operation = 'cart operation') => {
+    if (error.isAuthError || error.status === 401) {
+      show('Session expired. Please log in again.', 'error')
+      logout()
+      return true // Signal that this was an auth error
+    }
+    console.error(`Cart ${operation} failed:`, error)
+    show(error.message || `Failed to ${operation}`, 'error')
+    return false
+  }
 
   // When user becomes authenticated, sync local cart to server, then load server cart
   useEffect(() => {
@@ -45,8 +59,7 @@ export function CartProvider({ children }) {
         }))
         setCart({ items })
       } catch (e) {
-        // silent fail keeps local cart
-        console.error('Cart sync failed', e)
+        handleApiError(e, 'sync')
       }
     }
     sync()
@@ -56,14 +69,19 @@ export function CartProvider({ children }) {
   const addToCart = async (product, quantity = 1) => {
     // If authenticated, add to server first, then refresh from server
     if (isAuthenticated) {
-      await addCartItem(product.id, quantity)
-      const serverCart = await apiGetCart()
-      const items = serverCart.items.map(it => ({
-        itemId: it.id,
-        product: { id: it.product_id, name: it.product_name, price_cents: it.unit_price_cents, image_url: it.product_image_url },
-        quantity: it.quantity,
-      }))
-      setCart({ items })
+      try {
+        await addCartItem(product.id, quantity)
+        const serverCart = await apiGetCart()
+        const items = serverCart.items.map(it => ({
+          itemId: it.id,
+          product: { id: it.product_id, name: it.product_name, price_cents: it.unit_price_cents, image_url: it.product_image_url },
+          quantity: it.quantity,
+        }))
+        setCart({ items })
+      } catch (error) {
+        handleApiError(error, 'add to cart')
+        throw error
+      }
       return
     }
     setCart(prev => {
@@ -93,14 +111,19 @@ export function CartProvider({ children }) {
       return
     }
     if (isAuthenticated && itemId) {
-      await updateCartItem(itemId, quantity)
-      const serverCart = await apiGetCart()
-      const items = serverCart.items.map(it => ({
-        itemId: it.id,
-        product: { id: it.product_id, name: it.product_name, price_cents: it.unit_price_cents, image_url: it.product_image_url },
-        quantity: it.quantity,
-      }))
-      setCart({ items })
+      try {
+        await updateCartItem(itemId, quantity)
+        const serverCart = await apiGetCart()
+        const items = serverCart.items.map(it => ({
+          itemId: it.id,
+          product: { id: it.product_id, name: it.product_name, price_cents: it.unit_price_cents, image_url: it.product_image_url },
+          quantity: it.quantity,
+        }))
+        setCart({ items })
+      } catch (error) {
+        handleApiError(error, 'update quantity')
+        throw error
+      }
       return
     }
     setCart(prev => ({
@@ -115,14 +138,19 @@ export function CartProvider({ children }) {
 
   const removeFromCart = async (productId, itemId) => {
     if (isAuthenticated && itemId) {
-      await removeCartItem(itemId)
-      const serverCart = await apiGetCart()
-      const items = serverCart.items.map(it => ({
-        itemId: it.id,
-        product: { id: it.product_id, name: it.product_name, price_cents: it.unit_price_cents },
-        quantity: it.quantity,
-      }))
-      setCart({ items })
+      try {
+        await removeCartItem(itemId)
+        const serverCart = await apiGetCart()
+        const items = serverCart.items.map(it => ({
+          itemId: it.id,
+          product: { id: it.product_id, name: it.product_name, price_cents: it.unit_price_cents },
+          quantity: it.quantity,
+        }))
+        setCart({ items })
+      } catch (error) {
+        handleApiError(error, 'remove item')
+        throw error
+      }
       return
     }
     setCart(prev => ({
