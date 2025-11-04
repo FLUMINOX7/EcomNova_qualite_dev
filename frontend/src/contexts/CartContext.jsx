@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react'
 import { useAuth } from './AuthContext'
 import { useNotify } from './NotificationContext'
 import { getCart as apiGetCart, addCartItem, updateCartItem, removeCartItem } from '../utils/api'
@@ -9,6 +9,7 @@ export function CartProvider({ children }) {
   const [cart, setCart] = useState({ items: [] })
   const { isAuthenticated, logout } = useAuth()
   const { show } = useNotify()
+  const hasSynced = useRef(false)
 
   useEffect(() => {
     // Load cart from localStorage
@@ -38,12 +39,26 @@ export function CartProvider({ children }) {
   // When user becomes authenticated, sync local cart to server, then load server cart
   useEffect(() => {
     const sync = async () => {
-      if (!isAuthenticated) return
+      if (!isAuthenticated) {
+        // Reset sync flag when user logs out
+        hasSynced.current = false
+        return
+      }
+      
+      // Only sync once per authentication session
+      if (hasSynced.current) return
+      hasSynced.current = true
+      
       try {
-        // Push local items to server
-        for (const item of cart.items) {
-          await addCartItem(item.product.id, item.quantity)
+        // Push local items to server only if there are local items
+        if (cart.items.length > 0) {
+          for (const item of cart.items) {
+            await addCartItem(item.product.id, item.quantity)
+          }
+          // Clear local cart after successful sync
+          setCart({ items: [] })
         }
+        
         // Fetch server cart and enrich with product details minimal mapping
         const serverCart = await apiGetCart()
         // Map server response items to our structure (no images available here)
@@ -54,6 +69,7 @@ export function CartProvider({ children }) {
             name: it.product_name,
             price_cents: it.unit_price_cents,
             image_url: it.product_image_url,
+            stock_qty: it.product_stock_qty,
           },
           quantity: it.quantity,
         }))
@@ -74,7 +90,13 @@ export function CartProvider({ children }) {
         const serverCart = await apiGetCart()
         const items = serverCart.items.map(it => ({
           itemId: it.id,
-          product: { id: it.product_id, name: it.product_name, price_cents: it.unit_price_cents, image_url: it.product_image_url },
+          product: { 
+            id: it.product_id, 
+            name: it.product_name, 
+            price_cents: it.unit_price_cents, 
+            image_url: it.product_image_url,
+            stock_qty: it.product_stock_qty 
+          },
           quantity: it.quantity,
         }))
         setCart({ items })
@@ -116,7 +138,13 @@ export function CartProvider({ children }) {
         const serverCart = await apiGetCart()
         const items = serverCart.items.map(it => ({
           itemId: it.id,
-          product: { id: it.product_id, name: it.product_name, price_cents: it.unit_price_cents, image_url: it.product_image_url },
+          product: { 
+            id: it.product_id, 
+            name: it.product_name, 
+            price_cents: it.unit_price_cents, 
+            image_url: it.product_image_url,
+            stock_qty: it.product_stock_qty 
+          },
           quantity: it.quantity,
         }))
         setCart({ items })
@@ -143,7 +171,12 @@ export function CartProvider({ children }) {
         const serverCart = await apiGetCart()
         const items = serverCart.items.map(it => ({
           itemId: it.id,
-          product: { id: it.product_id, name: it.product_name, price_cents: it.unit_price_cents },
+          product: { 
+            id: it.product_id, 
+            name: it.product_name, 
+            price_cents: it.unit_price_cents,
+            stock_qty: it.product_stock_qty 
+          },
           quantity: it.quantity,
         }))
         setCart({ items })
