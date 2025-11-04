@@ -13,7 +13,7 @@ export default function Checkout() {
   
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
-  // Payment simulation state
+  // Payment form state
   const [cardName, setCardName] = useState('')
   const [cardNumber, setCardNumber] = useState('')
   const [expiry, setExpiry] = useState('') // MM/YY
@@ -90,7 +90,7 @@ export default function Checkout() {
       const token = localStorage.getItem('token')
       const [expMonth, expYear] = expiry.split('/')
       
-      const paymentRes = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/orders/${order.id}/pay`, {
+      const paymentRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/orders/${order.id}/pay`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -190,9 +190,9 @@ export default function Checkout() {
           </div>
         </div>
 
-        {/* Right column - Payment + Delivery info (simulation) */}
+        {/* Right column - Payment + Delivery info */}
         <div>
-          <h2 style={{ marginBottom: '1rem' }}>Paiement (simulation)</h2>
+          <h2 style={{ marginBottom: '1rem' }}>Paiement</h2>
           
           <div style={{ 
             background: 'var(--card-bg)', 
@@ -200,17 +200,6 @@ export default function Checkout() {
             borderRadius: '12px', 
             padding: '1.5rem' 
           }}>
-            <p style={{ 
-              background: 'rgba(56,189,248,0.08)',
-              border: '1px solid var(--border-glow)',
-              borderRadius: '8px',
-              padding: '0.75rem 1rem',
-              marginBottom: '1rem',
-              color: 'var(--text-secondary)'
-            }}>
-              Cette section simule un paiement CB. Aucune donnée de carte n’est envoyée au serveur.
-            </p>
-
             <div style={{ display: 'grid', gap: '1rem' }}>
               <div>
                 <label htmlFor="cardName" style={{ display: 'block', marginBottom: '.35rem' }}>Nom sur la carte</label>
@@ -318,15 +307,6 @@ export default function Checkout() {
             >
               {loading ? 'Traitement en cours...' : 'Confirmer et payer'}
             </button>
-
-            <p style={{ 
-              fontSize: '0.85rem', 
-              color: 'var(--text-secondary)', 
-              textAlign: 'center', 
-              marginTop: '1rem' 
-            }}>
-              Simulation de paiement — aucune donnée n’est transmise
-            </p>
             {/* End grid wrapper */}
             </div>
           </div>

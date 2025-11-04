@@ -126,7 +126,8 @@ export function removeCartItem(itemId) {
 // Orders (using SQL endpoints)
 export function createOrder() {
   return request('/orders', {
-    method: 'POST'
+    method: 'POST',
+    body: JSON.stringify({})
   })
 }
 
