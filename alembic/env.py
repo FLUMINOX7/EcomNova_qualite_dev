@@ -1,7 +1,10 @@
 from __future__ import annotations
+
 import os
 from logging.config import fileConfig
+
 from sqlalchemy import engine_from_config, pool
+
 from alembic import context
 
 # this is the Alembic Config object, which provides
@@ -18,7 +21,6 @@ if db_url:
 
 # Import the project's metadata (so Alembic can autogenerate)
 from backend.db import Base
-import backend.models_sql  # ensure models are registered on Base
 
 target_metadata = Base.metadata
 

@@ -1,13 +1,14 @@
 from __future__ import annotations
+
 import os
-from typing import Generator
+from collections.abc import Generator
+
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
-from sqlalchemy.orm import sessionmaker, declarative_base, Session
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    "postgresql://postgres:postgres@localhost:5432/ecomnova"
+    "DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/ecomnova"
 )
 
 Base = declarative_base()

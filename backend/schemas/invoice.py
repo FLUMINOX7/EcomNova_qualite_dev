@@ -1,10 +1,11 @@
 """Pydantic schemas for invoices"""
+
 from pydantic import BaseModel
-from typing import List
 
 
 class InvoiceLineResponse(BaseModel):
     """Invoice line response"""
+
     id: str
     product_id: str
     name: str
@@ -18,12 +19,13 @@ class InvoiceLineResponse(BaseModel):
 
 class InvoiceResponse(BaseModel):
     """Invoice response"""
+
     id: str
     order_id: str
     user_id: str
     total_cents: int
     issued_at: float
-    lines: List[InvoiceLineResponse]
+    lines: list[InvoiceLineResponse]
 
     class Config:
         from_attributes = True

@@ -1,11 +1,10 @@
 from __future__ import annotations
+
+import hashlib
+import time
+import uuid
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import Dict, List, Optional
-import uuid
-import time
-import hashlib
-
 
 # =========================
 # ========== Models ======
@@ -34,7 +33,12 @@ class User:
 
     def update_profile(self, **fields):
         for k, v in fields.items():
-            if hasattr(self, k) and k not in {"id", "email", "is_admin", "password_hash"}:
+            if hasattr(self, k) and k not in {
+                "id",
+                "email",
+                "is_admin",
+                "password_hash",
+            }:
                 setattr(self, k, v)
 
 
@@ -57,7 +61,7 @@ class CartItem:
 @dataclass
 class Cart:
     user_id: str
-    items: Dict[str, CartItem] = field(default_factory=dict)  # key: product_id
+    items: dict[str, CartItem] = field(default_factory=dict)  # key: product_id
 
     def add(self, product: Product, qty: int = 1):
         if qty <= 0:
@@ -84,7 +88,7 @@ class Cart:
     def clear(self):
         self.items.clear()
 
-    def total_cents(self, product_repo: "ProductRepository") -> int:
+    def total_cents(self, product_repo: ProductRepository) -> int:
         total = 0
         for it in self.items.values():
             p = product_repo.get(it.product_id)
@@ -116,7 +120,7 @@ class Invoice:
     id: str
     order_id: str
     user_id: str
-    lines: List[InvoiceLine]
+    lines: list[InvoiceLine]
     total_cents: int
     issued_at: float  # epoch timestamp
 
@@ -128,7 +132,7 @@ class Payment:
     user_id: str
     amount_cents: int
     provider: str  # ex: "CB"
-    provider_ref: Optional[str]
+    provider_ref: str | None
     succeeded: bool
     created_at: float
 
@@ -138,7 +142,7 @@ class Delivery:
     id: str
     order_id: str
     carrier: str
-    tracking_number: Optional[str]
+    tracking_number: str | None
     address: str
     status: str  # ex: "PREPAREE", "EN_COURS", "LIVREE"
 
@@ -147,7 +151,7 @@ class Delivery:
 class Message:
     id: str
     thread_id: str
-    author_user_id: Optional[str]  # None = agent support
+    author_user_id: str | None  # None = agent support
     body: str
     created_at: float
 
@@ -156,9 +160,9 @@ class Message:
 class MessageThread:
     id: str
     user_id: str
-    order_id: Optional[str]
+    order_id: str | None
     subject: str
-    messages: List[Message] = field(default_factory=list)
+    messages: list[Message] = field(default_factory=list)
     closed: bool = False
 
 
@@ -166,18 +170,18 @@ class MessageThread:
 class Order:
     id: str
     user_id: str
-    items: List[OrderItem]
+    items: list[OrderItem]
     status: OrderStatus
     created_at: float
-    validated_at: Optional[float] = None
-    paid_at: Optional[float] = None
-    shipped_at: Optional[float] = None
-    delivered_at: Optional[float] = None
-    cancelled_at: Optional[float] = None
-    refunded_at: Optional[float] = None
-    delivery: Optional[Delivery] = None
-    invoice_id: Optional[str] = None
-    payment_id: Optional[str] = None
+    validated_at: float | None = None
+    paid_at: float | None = None
+    shipped_at: float | None = None
+    delivered_at: float | None = None
+    cancelled_at: float | None = None
+    refunded_at: float | None = None
+    delivery: Delivery | None = None
+    invoice_id: str | None = None
+    payment_id: str | None = None
 
     def total_cents(self) -> int:
         return sum(i.unit_price_cents * i.quantity for i in self.items)
@@ -190,31 +194,31 @@ class Order:
 
 class UserRepository:
     def __init__(self):
-        self._by_id: Dict[str, User] = {}
-        self._by_email: Dict[str, User] = {}
+        self._by_id: dict[str, User] = {}
+        self._by_email: dict[str, User] = {}
 
     def add(self, user: User):
         self._by_id[user.id] = user
         self._by_email[user.email.lower()] = user
 
-    def get(self, user_id: str) -> Optional[User]:
+    def get(self, user_id: str) -> User | None:
         return self._by_id.get(user_id)
 
-    def get_by_email(self, email: str) -> Optional[User]:
+    def get_by_email(self, email: str) -> User | None:
         return self._by_email.get(email.lower())
 
 
 class ProductRepository:
     def __init__(self):
-        self._by_id: Dict[str, Product] = {}
+        self._by_id: dict[str, Product] = {}
 
     def add(self, product: Product):
         self._by_id[product.id] = product
 
-    def get(self, product_id: str) -> Optional[Product]:
+    def get(self, product_id: str) -> Product | None:
         return self._by_id.get(product_id)
 
-    def list_active(self) -> List[Product]:
+    def list_active(self) -> list[Product]:
         return [p for p in self._by_id.values() if p.active]
 
     def reserve_stock(self, product_id: str, qty: int):
@@ -231,7 +235,7 @@ class ProductRepository:
 
 class CartRepository:
     def __init__(self):
-        self._by_user: Dict[str, Cart] = {}
+        self._by_user: dict[str, Cart] = {}
 
     def get_or_create(self, user_id: str) -> Cart:
         if user_id not in self._by_user:
@@ -244,17 +248,17 @@ class CartRepository:
 
 class OrderRepository:
     def __init__(self):
-        self._by_id: Dict[str, Order] = {}
-        self._by_user: Dict[str, List[str]] = {}
+        self._by_id: dict[str, Order] = {}
+        self._by_user: dict[str, list[str]] = {}
 
     def add(self, order: Order):
         self._by_id[order.id] = order
         self._by_user.setdefault(order.user_id, []).append(order.id)
 
-    def get(self, order_id: str) -> Optional[Order]:
+    def get(self, order_id: str) -> Order | None:
         return self._by_id.get(order_id)
 
-    def list_by_user(self, user_id: str) -> List[Order]:
+    def list_by_user(self, user_id: str) -> list[Order]:
         return [self._by_id[oid] for oid in self._by_user.get(user_id, [])]
 
     def update(self, order: Order):
@@ -263,37 +267,37 @@ class OrderRepository:
 
 class InvoiceRepository:
     def __init__(self):
-        self._by_id: Dict[str, Invoice] = {}
+        self._by_id: dict[str, Invoice] = {}
 
     def add(self, invoice: Invoice):
         self._by_id[invoice.id] = invoice
 
-    def get(self, invoice_id: str) -> Optional[Invoice]:
+    def get(self, invoice_id: str) -> Invoice | None:
         return self._by_id.get(invoice_id)
 
 
 class PaymentRepository:
     def __init__(self):
-        self._by_id: Dict[str, Payment] = {}
+        self._by_id: dict[str, Payment] = {}
 
     def add(self, payment: Payment):
         self._by_id[payment.id] = payment
 
-    def get(self, payment_id: str) -> Optional[Payment]:
+    def get(self, payment_id: str) -> Payment | None:
         return self._by_id.get(payment_id)
 
 
 class ThreadRepository:
     def __init__(self):
-        self._by_id: Dict[str, MessageThread] = {}
+        self._by_id: dict[str, MessageThread] = {}
 
     def add(self, thread: MessageThread):
         self._by_id[thread.id] = thread
 
-    def get(self, thread_id: str) -> Optional[MessageThread]:
+    def get(self, thread_id: str) -> MessageThread | None:
         return self._by_id.get(thread_id)
 
-    def list_by_user(self, user_id: str) -> List[MessageThread]:
+    def list_by_user(self, user_id: str) -> list[MessageThread]:
         return [t for t in self._by_id.values() if t.user_id == user_id]
 
 
@@ -315,8 +319,9 @@ class PasswordHasher:
 
 class SessionManager:
     """Gestion simple de sessions en mémoire."""
+
     def __init__(self):
-        self._sessions: Dict[str, str] = {}  # token -> user_id
+        self._sessions: dict[str, str] = {}  # token -> user_id
 
     def create_session(self, user_id: str) -> str:
         token = str(uuid.uuid4())
@@ -326,7 +331,7 @@ class SessionManager:
     def destroy_session(self, token: str):
         self._sessions.pop(token, None)
 
-    def get_user_id(self, token: str) -> Optional[str]:
+    def get_user_id(self, token: str) -> str | None:
         return self._sessions.get(token)
 
 
@@ -340,7 +345,15 @@ class AuthService:
         self.users = users
         self.sessions = sessions
 
-    def register(self, email: str, password: str, first_name: str, last_name: str, address: str, is_admin: bool=False) -> User:
+    def register(
+        self,
+        email: str,
+        password: str,
+        first_name: str,
+        last_name: str,
+        address: str,
+        is_admin: bool = False,
+    ) -> User:
         if self.users.get_by_email(email):
             raise ValueError("Email déjà utilisé.")
         user = User(
@@ -350,7 +363,7 @@ class AuthService:
             first_name=first_name,
             last_name=last_name,
             address=address,
-            is_admin=is_admin
+            is_admin=is_admin,
         )
         self.users.add(user)
         return user
@@ -369,7 +382,7 @@ class CatalogService:
     def __init__(self, products: ProductRepository):
         self.products = products
 
-    def list_products(self) -> List[Product]:
+    def list_products(self) -> list[Product]:
         return self.products.list_active()
 
 
@@ -396,20 +409,26 @@ class CartService:
 
 class PaymentGateway:
     """Simulation d'un prestataire CB (à remplacer par Stripe/Adyen/etc.)."""
-    def charge_card(self, card_number: str, exp_month: int, exp_year: int, cvc: str, amount_cents: int, idempotency_key: str) -> Dict:
+
+    def charge_card(
+        self,
+        card_number: str,
+        exp_month: int,
+        exp_year: int,
+        cvc: str,
+        amount_cents: int,
+        idempotency_key: str,
+    ) -> dict:
         # MOCK: succès si carte ne finit pas par '0000'
         ok = not card_number.endswith("0000")
         return {
             "success": ok,
             "transaction_id": str(uuid.uuid4()) if ok else None,
-            "failure_reason": None if ok else "CARTE_REFUSEE"
+            "failure_reason": None if ok else "CARTE_REFUSEE",
         }
 
-    def refund(self, transaction_id: str, amount_cents: int) -> Dict:
-        return {
-            "success": True,
-            "refund_id": str(uuid.uuid4())
-        }
+    def refund(self, transaction_id: str, amount_cents: int) -> dict:
+        return {"success": True, "refund_id": str(uuid.uuid4())}
 
 
 class BillingService:
@@ -423,7 +442,7 @@ class BillingService:
                 name=i.name,
                 unit_price_cents=i.unit_price_cents,
                 quantity=i.quantity,
-                line_total_cents=i.unit_price_cents * i.quantity
+                line_total_cents=i.unit_price_cents * i.quantity,
             )
             for i in order.items
         ]
@@ -433,27 +452,31 @@ class BillingService:
             user_id=order.user_id,
             lines=lines,
             total_cents=sum(l.line_total_cents for l in lines),
-            issued_at=time.time()
+            issued_at=time.time(),
         )
         self.invoices.add(inv)
         return inv
 
 
 class DeliveryService:
-    def prepare_delivery(self, order: Order, address: str, carrier: str = "POSTE") -> Delivery:
+    def prepare_delivery(
+        self, order: Order, address: str, carrier: str = "POSTE"
+    ) -> Delivery:
         delivery = Delivery(
             id=str(uuid.uuid4()),
             order_id=order.id,
             carrier=carrier,
             tracking_number=None,
             address=address,
-            status="PREPAREE"
+            status="PREPAREE",
         )
         return delivery
 
     def ship(self, delivery: Delivery) -> Delivery:
         delivery.status = "EN_COURS"
-        delivery.tracking_number = delivery.tracking_number or f"TRK-{uuid.uuid4().hex[:10].upper()}"
+        delivery.tracking_number = (
+            delivery.tracking_number or f"TRK-{uuid.uuid4().hex[:10].upper()}"
+        )
         return delivery
 
     def mark_delivered(self, delivery: Delivery) -> Delivery:
@@ -472,7 +495,7 @@ class OrderService:
         billing: BillingService,
         delivery_svc: DeliveryService,
         gateway: PaymentGateway,
-        users: UserRepository
+        users: UserRepository,
     ):
         self.orders = orders
         self.products = products
@@ -489,7 +512,7 @@ class OrderService:
         if not cart.items:
             raise ValueError("Panier vide.")
         # Réserver le stock
-        order_items: List[OrderItem] = []
+        order_items: list[OrderItem] = []
         for it in cart.items.values():
             p = self.products.get(it.product_id)
             if not p or not p.active:
@@ -497,25 +520,29 @@ class OrderService:
             if p.stock_qty < it.quantity:
                 raise ValueError(f"Stock insuffisant pour {p.name}.")
             self.products.reserve_stock(p.id, it.quantity)
-            order_items.append(OrderItem(
-                product_id=p.id,
-                name=p.name,
-                unit_price_cents=p.price_cents,
-                quantity=it.quantity
-            ))
+            order_items.append(
+                OrderItem(
+                    product_id=p.id,
+                    name=p.name,
+                    unit_price_cents=p.price_cents,
+                    quantity=it.quantity,
+                )
+            )
         order = Order(
             id=str(uuid.uuid4()),
             user_id=user_id,
             items=order_items,
             status=OrderStatus.CREE,
-            created_at=time.time()
+            created_at=time.time(),
         )
         self.orders.add(order)
         # vider le panier
         self.carts.clear(user_id)
         return order
 
-    def pay_by_card(self, order_id: str, card_number: str, exp_month: int, exp_year: int, cvc: str) -> Payment:
+    def pay_by_card(
+        self, order_id: str, card_number: str, exp_month: int, exp_year: int, cvc: str
+    ) -> Payment:
         order = self.orders.get(order_id)
         if not order:
             raise ValueError("Commande introuvable.")
@@ -533,7 +560,7 @@ class OrderService:
             provider="CB",
             provider_ref=res.get("transaction_id"),
             succeeded=res["success"],
-            created_at=time.time()
+            created_at=time.time(),
         )
         self.payments.add(payment)
         if not payment.succeeded:
@@ -547,7 +574,7 @@ class OrderService:
         self.orders.update(order)
         return payment
 
-    def view_orders(self, user_id: str) -> List[Order]:
+    def view_orders(self, user_id: str) -> list[Order]:
         return self.orders.list_by_user(user_id)
 
     def request_cancellation(self, user_id: str, order_id: str) -> Order:
@@ -583,7 +610,9 @@ class OrderService:
         order = self.orders.get(order_id)
         if not order or order.status != OrderStatus.PAYEE:
             raise ValueError("La commande doit être payée pour être expédiée.")
-        delivery = self.delivery_svc.prepare_delivery(order, address=self.users.get(order.user_id).address)
+        delivery = self.delivery_svc.prepare_delivery(
+            order, address=self.users.get(order.user_id).address
+        )
         delivery = self.delivery_svc.ship(delivery)
         order.delivery = delivery
         order.status = OrderStatus.EXPEDIEE
@@ -604,7 +633,9 @@ class OrderService:
         self.orders.update(order)
         return order
 
-    def backoffice_refund(self, admin_user_id: str, order_id: str, amount_cents: Optional[int] = None) -> Order:
+    def backoffice_refund(
+        self, admin_user_id: str, order_id: str, amount_cents: int | None = None
+    ) -> Order:
         admin = self.users.get(admin_user_id)
         if not admin or not admin.is_admin:
             raise PermissionError("Droits insuffisants.")
@@ -628,22 +659,35 @@ class OrderService:
 
 class CustomerService:
     """Service client: fils de discussion & messages côté UI + réponses agents."""
+
     def __init__(self, threads: ThreadRepository, users: UserRepository):
         self.threads = threads
         self.users = users
 
-    def open_thread(self, user_id: str, subject: str, order_id: Optional[str] = None) -> MessageThread:
-        th = MessageThread(id=str(uuid.uuid4()), user_id=user_id, order_id=order_id, subject=subject)
+    def open_thread(
+        self, user_id: str, subject: str, order_id: str | None = None
+    ) -> MessageThread:
+        th = MessageThread(
+            id=str(uuid.uuid4()), user_id=user_id, order_id=order_id, subject=subject
+        )
         self.threads.add(th)
         return th
 
-    def post_message(self, thread_id: str, author_user_id: Optional[str], body: str) -> Message:
+    def post_message(
+        self, thread_id: str, author_user_id: str | None, body: str
+    ) -> Message:
         th = self.threads.get(thread_id)
         if not th or th.closed:
             raise ValueError("Fil introuvable ou fermé.")
         if author_user_id is not None and not self.users.get(author_user_id):
             raise ValueError("Auteur inconnu.")
-        msg = Message(id=str(uuid.uuid4()), thread_id=thread_id, author_user_id=author_user_id, body=body, created_at=time.time())
+        msg = Message(
+            id=str(uuid.uuid4()),
+            thread_id=thread_id,
+            author_user_id=author_user_id,
+            body=body,
+            created_at=time.time(),
+        )
         th.messages.append(msg)
         return msg
 
@@ -679,29 +723,59 @@ if __name__ == "__main__":
     billing = BillingService(invoices)
     delivery_svc = DeliveryService()
     gateway = PaymentGateway()
-    order_svc = OrderService(orders, products, carts, payments, invoices, billing, delivery_svc, gateway, users)
+    order_svc = OrderService(
+        orders,
+        products,
+        carts,
+        payments,
+        invoices,
+        billing,
+        delivery_svc,
+        gateway,
+        users,
+    )
     cs = CustomerService(threads, users)
 
     # Seed products
-    p1 = Product(id=str(uuid.uuid4()), name="T-Shirt Logo", description="Coton bio", price_cents=1999, stock_qty=100)
-    p2 = Product(id=str(uuid.uuid4()), name="Sweat Capuche", description="Molleton", price_cents=4999, stock_qty=50)
-    products.add(p1); products.add(p2)
+    p1 = Product(
+        id=str(uuid.uuid4()),
+        name="T-Shirt Logo",
+        description="Coton bio",
+        price_cents=1999,
+        stock_qty=100,
+    )
+    p2 = Product(
+        id=str(uuid.uuid4()),
+        name="Sweat Capuche",
+        description="Molleton",
+        price_cents=4999,
+        stock_qty=50,
+    )
+    products.add(p1)
+    products.add(p2)
 
     # Create users
-    admin = auth.register("admin@shop.test", "admin", "Admin", "Root", "1 Rue du BO", is_admin=True)
-    client = auth.register("client@shop.test", "secret", "Alice", "Martin", "12 Rue des Fleurs")
+    admin = auth.register(
+        "admin@shop.test", "admin", "Admin", "Root", "1 Rue du BO", is_admin=True
+    )
+    client = auth.register(
+        "client@shop.test", "secret", "Alice", "Martin", "12 Rue des Fleurs"
+    )
 
     token = auth.login("client@shop.test", "secret")
     user_id = sessions.get_user_id(token)
 
-    print("Produits:", [f"{p.name} {p.price_cents/100:.2f}€" for p in catalog.list_products()])
+    print(
+        "Produits:",
+        [f"{p.name} {p.price_cents/100:.2f}€" for p in catalog.list_products()],
+    )
 
     cart_svc.add_to_cart(user_id, p1.id, 2)
     cart_svc.add_to_cart(user_id, p2.id, 1)
-    print("Total panier €:", cart_svc.cart_total(user_id)/100)
+    print("Total panier €:", cart_svc.cart_total(user_id) / 100)
 
     order = order_svc.checkout(user_id)
-    print("Commande créée:", order.id, "Total €:", order.total_cents()/100)
+    print("Commande créée:", order.id, "Total €:", order.total_cents() / 100)
 
     order = order_svc.backoffice_validate_order(admin.id, order.id)
     print("Commande validée:", order.status)
@@ -716,7 +790,11 @@ if __name__ == "__main__":
 
     th = cs.open_thread(user_id, "Taille trop petite", order_id=order.id)
     cs.post_message(th.id, user_id, "Bonjour, je souhaite échanger le T-Shirt.")
-    cs.post_message(th.id, None, "Bonjour, nous pouvons proposer un échange. Merci de renvoyer l'article.")
+    cs.post_message(
+        th.id,
+        None,
+        "Bonjour, nous pouvons proposer un échange. Merci de renvoyer l'article.",
+    )
     cs.close_thread(th.id, admin.id)
     print("Fil messages:", len(th.messages), "Fermé:", th.closed)
 

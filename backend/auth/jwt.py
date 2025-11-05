@@ -1,12 +1,14 @@
 """JWT authentication utilities"""
+
 from __future__ import annotations
+
 import os
 from datetime import datetime, timedelta
-from typing import Optional
+
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 # Configuration
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev-secret-key-change-in-production")
@@ -30,15 +32,15 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     """Create a JWT access token"""
     to_encode = data.copy()
-    
+
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
         expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    
+
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -57,14 +59,16 @@ def decode_access_token(token: str) -> dict:
         )
 
 
-def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
+def get_current_user_id(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+) -> str:
     """
     Dependency to extract and validate the current user ID from JWT token
     Usage: user_id: str = Depends(get_current_user_id)
     """
     token = credentials.credentials
     payload = decode_access_token(token)
-    
+
     user_id: str = payload.get("sub")
     if user_id is None:
         raise HTTPException(
@@ -72,7 +76,7 @@ def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(secu
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     return user_id
 
 
@@ -83,14 +87,14 @@ def require_admin(credentials: HTTPAuthorizationCredentials = Depends(security))
     """
     token = credentials.credentials
     payload = decode_access_token(token)
-    
+
     user_id: str = payload.get("sub")
     is_admin: bool = payload.get("is_admin", False)
-    
+
     if not is_admin:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Admin privileges required",
         )
-    
+
     return user_id

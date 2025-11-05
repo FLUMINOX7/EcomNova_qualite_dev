@@ -1,16 +1,18 @@
 from __future__ import annotations
-import os
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from backend.db import ping_db, init_models
-from backend.dependencies import init_db, _engine
-from backend.routers import auth, products, cart, orders, core_integration, invoices, threads, stats
+
+from backend.db import init_models, ping_db
+from backend.dependencies import _engine, init_db
+from backend.routers import (auth, cart, core_integration, invoices, orders,
+                             products, stats, threads)
 
 # Create FastAPI app
 app = FastAPI(
     title="EcomNova API",
     description="E-commerce REST API for EcomNova project",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # CORS configuration
@@ -40,6 +42,7 @@ def startup_event():
     # Ensure all SQLAlchemy models are created (idempotent)
     try:
         from backend.dependencies import _engine as engine
+
         if engine is not None:
             init_models(engine)
     except Exception:
@@ -50,7 +53,6 @@ def startup_event():
 @app.on_event("shutdown")
 def shutdown_event():
     """Cleanup on shutdown"""
-    from backend.dependencies import _engine
     if _engine is not None:
         try:
             _engine.dispose()
@@ -67,10 +69,9 @@ def health():
 @app.get("/ping-db")
 def pingdb():
     """Database connectivity check"""
-    from backend.dependencies import _engine
     if _engine is None:
         raise HTTPException(status_code=503, detail="DB not initialized")
-    
+
     ok = ping_db(_engine)
     if not ok:
         raise HTTPException(status_code=503, detail="DB unavailable")

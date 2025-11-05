@@ -1,17 +1,20 @@
 """Product endpoints"""
+
 from __future__ import annotations
-from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from backend.dependencies import get_session
-from backend.schemas.product import ProductCreate, ProductUpdate, ProductResponse
-from backend.repositories.product import ProductRepository
+
 from backend.auth.jwt import require_admin
+from backend.dependencies import get_session
+from backend.repositories.product import ProductRepository
+from backend.schemas.product import (ProductCreate, ProductResponse,
+                                     ProductUpdate)
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
 
-@router.get("", response_model=List[ProductResponse])
+@router.get("", response_model=list[ProductResponse])
 def list_products(db: Session = Depends(get_session)):
     """List all active products"""
     repo = ProductRepository(db)
@@ -24,13 +27,12 @@ def get_product(product_id: str, db: Session = Depends(get_session)):
     """Get a specific product by ID"""
     repo = ProductRepository(db)
     product = repo.get_product_by_id(product_id)
-    
+
     if not product:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Product not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Product not found"
         )
-    
+
     return ProductResponse.from_orm(product)
 
 
@@ -38,7 +40,7 @@ def get_product(product_id: str, db: Session = Depends(get_session)):
 def create_product(
     product_data: ProductCreate,
     db: Session = Depends(get_session),
-    admin_id: str = Depends(require_admin)
+    admin_id: str = Depends(require_admin),
 ):
     """Create a new product (admin only)"""
     repo = ProductRepository(db)
@@ -48,7 +50,7 @@ def create_product(
         image_url=product_data.image_url,
         price_cents=product_data.price_cents,
         stock_qty=product_data.stock_qty,
-        active=product_data.active
+        active=product_data.active,
     )
     return ProductResponse.from_orm(product)
 
@@ -58,7 +60,7 @@ def update_product(
     product_id: str,
     product_data: ProductUpdate,
     db: Session = Depends(get_session),
-    admin_id: str = Depends(require_admin)
+    admin_id: str = Depends(require_admin),
 ):
     """Update a product (admin only)"""
     repo = ProductRepository(db)
@@ -69,13 +71,12 @@ def update_product(
         image_url=product_data.image_url,
         price_cents=product_data.price_cents,
         stock_qty=product_data.stock_qty,
-        active=product_data.active
+        active=product_data.active,
     )
-    
+
     if not product:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Product not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Product not found"
         )
-    
+
     return ProductResponse.from_orm(product)
