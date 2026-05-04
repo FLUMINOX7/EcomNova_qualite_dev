@@ -1,30 +1,24 @@
-# EcomNova - Plateforme E-commerce Moderne
+# EcomNova
 
-[![Tests](https://github.com/FLUMINOX7/EcomNova_qualite_dev/actions/workflows/test.yml/badge.svg)](https://github.com/FLUMINOX7/EcomNova_qualite_dev/actions/workflows/test.yml)
-[![Code Quality](https://github.com/FLUMINOX7/EcomNova_qualite_dev/actions/workflows/lint.yml/badge.svg)](https://github.com/FLUMINOX7/EcomNova_qualite_dev/actions/workflows/lint.yml)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
-[![React 19](https://img.shields.io/badge/React-19-61DAFB.svg)](https://reactjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115.0-009688.svg)](https://fastapi.tiangolo.com)
+EcomNova est une plateforme e-commerce développée avec FastAPI, React et PostgreSQL. Le projet couvre le parcours utilisateur principal, l'administration, les tests automatisés et le déploiement via Docker Compose.
 
-**EcomNova** est une plateforme e-commerce complète et moderne, développée avec les dernières technologies web. Elle intègre un backend FastAPI robuste, un frontend React élégant, et suit les meilleures pratiques de développement et de qualité logicielle.
+## Fonctionnalités principales
 
-## ✨ **Fonctionnalités Principales**
+- Page d'accueil avec indicateurs en temps réel
+- Catalogue produits avec recherche et filtrage
+- Panier d'achat dynamique avec gestion des quantités
+- Authentification sécurisée avec JWT
+- Gestion des commandes
+- Interface d'administration pour la gestion des produits
+- API REST documentée via OpenAPI
 
-- 🏠 **Page d'accueil interactive** avec statistiques en temps réel et animations
-- 🛍️ **Catalogue produits** avec recherche avancée et filtrage
-- 🛒 **Panier d'achat** dynamique avec gestion des quantités
-- 👤 **Authentification sécurisée** avec JWT
-- 📦 **Gestion des commandes** complète
-- 📊 **Interface d'administration** pour la gestion des produits
-- 🔄 **API REST complète** avec documentation interactive
-
-## 🚀 **Démarrage Rapide**
+## Démarrage rapide
 
 ### Prérequis
 - **Docker** et **Docker Compose** (recommandé)
 - Ou **Python 3.11+** et **Node.js 18+** pour l'installation locale
 
-### Option 1 : Docker (Recommandé) 🐳
+### Option 1 : Docker (recommandé)
 
 ```bash
 # 1. Cloner le projet
@@ -35,9 +29,9 @@ cd EcomNova_qualite_dev
 docker compose up --build
 
 # 3. Accéder aux services
-# • Frontend: http://localhost:8080
-# • Backend API: http://localhost:8000  
-# • Documentation API: http://localhost:8000/docs
+# Frontend: http://localhost:8080
+# Backend API: http://localhost:8000
+# Documentation API: http://localhost:8000/docs
 ```
 
 ### Option 2 : Installation Locale
@@ -46,69 +40,69 @@ Voir les guides détaillés :
 - [Backend Setup](backend/README.md) - Configuration FastAPI + PostgreSQL
 - [Frontend Setup](frontend/README.md) - Configuration React + Vite
 
-### 🌱 Données de démonstration
+### Données de démonstration
 
 ```bash
 # Peupler la base avec des produits exemples
 docker compose exec backend python scripts/seed_products.py
 ```
 
-## 📋 Fonctionnalités
+## Fonctionnalités
 
-### API REST Complète
-- 🔐 **Authentification JWT** - Sécurisation des endpoints
-- 📦 **Gestion Produits** - CRUD complet avec interface admin
-- 🛒 **Panier dynamique** - Ajout/modification/suppression en temps réel
-- 📝 **Commandes** - Création et suivi complet des commandes
-- 👤 **Gestion Utilisateurs** - Profils et historique personnel
-- 📊 **Statistiques** - Métriques en temps réel pour le dashboard
+### API REST complète
+- Authentification JWT pour sécuriser les endpoints
+- Gestion des produits avec CRUD complet
+- Panier dynamique avec mise à jour en temps réel
+- Création et suivi des commandes
+- Gestion des utilisateurs et de leurs profils
+- Statistiques en temps réel pour le tableau de bord
 
-### Interface Utilisateur Moderne
-- 🏠 **Page d'accueil** avec animations et statistiques live
-- 🛍️ **Catalogue** avec recherche avancée et filtres intelligents
-- 💳 **Checkout** sécurisé avec validation de paiement
-- 📱 **Design responsive** adaptatif mobile/desktop
-- ⚡ **Performance optimisée** avec Vite et React 19
+### Interface utilisateur
+- Page d'accueil avec statistiques
+- Catalogue avec recherche et filtres
+- Parcours de commande sécurisé
+- Interface responsive pour desktop et mobile
+- Frontend optimisé avec Vite et React 19
 
-### Deux Modes de Fonctionnement
+### Modes de fonctionnement
 1. **Mode Production** (`/auth`, `/products`, `/cart`, `/orders`)  
    Persistance complète en PostgreSQL avec SQLAlchemy
    
 2. **Mode Développement** (`/core/*`)  
    Domaine métier en mémoire pour prototypage rapide
 
-## 🏗️ **Architecture**
+## Architecture
 
 ```
 EcomNova/
-├── 🎨 frontend/                # React 19 + Vite 7
+├── frontend/                   # React 19 + Vite 7
 │   ├── src/pages/             
-│   │   ├── Home.jsx           # Page d'accueil avec stats animées
-│   │   ├── Products.jsx       # Catalogue avec filtres avancés
-│   │   └── ...                # Auth, Cart, Checkout
-│   ├── src/components/        # Composants réutilisables
-│   └── src/__tests__/         # Tests Vitest (5 tests)
+│   │   ├── Home.jsx            # Page d'accueil
+│   │   ├── Products.jsx        # Catalogue
+│   │   └── ...                 # Auth, Cart, Checkout
+│   ├── src/components/         # Composants réutilisables
+│   └── src/__tests__/          # Tests Vitest
 │
-├── ⚡ backend/                 # FastAPI + SQLAlchemy
-│   ├── app.py                 # Point d'entrée principal
-│   ├── routers/               # Endpoints API REST
-│   │   ├── auth.py           # JWT Authentication
-│   │   ├── products.py       # CRUD Produits
-│   │   ├── stats.py          # Statistiques temps réel
-│   │   └── ...               # Cart, Orders
-│   ├── models_sql.py         # Modèles SQLAlchemy
-│   └── core.py               # Domaine métier (alternative)
+├── backend/                    # FastAPI + SQLAlchemy
+│   ├── app.py                  # Point d'entrée principal
+│   ├── routers/                # Endpoints API REST
+│   │   ├── auth.py             # Authentification JWT
+│   │   ├── products.py         # CRUD produits
+│   │   ├── stats.py            # Statistiques
+│   │   └── ...                 # Cart, orders
+│   ├── models_sql.py           # Modèles SQLAlchemy
+│   └── core.py                 # Domaine métier en mémoire
 │
-├── 🧪 tests/                  # Tests Backend (28 tests)
-│   ├── test_api_core_integration.py  # Tests API (20 tests)
-│   ├── test_core.py          # Tests domaine métier
-│   └── conftest.py           # Fixtures pytest
+├── tests/                      # Tests backend
+│   ├── test_api_core_integration.py  # Tests API
+│   ├── test_core.py           # Tests domaine métier
+│   └── conftest.py            # Fixtures pytest
 │
-├── 📚 docs/                   # Spécifications projet
-└── 🐳 docker-compose.yml     # Orchestration complète
+├── docs/                       # Spécifications projet
+└── docker-compose.yml          # Orchestration complète
 ```
 
-## 🛠️ **Stack Technique**
+## Stack technique
 
 | Composant | Technologie | Version | Description |
 |-----------|------------|---------|-------------|
@@ -124,14 +118,14 @@ EcomNova/
 | **Container** | Docker Compose | - | Orchestration multi-services |
 | **CI/CD** | GitHub Actions | - | Tests automatisés et qualité |
 
-## 🧪 **Tests & Qualité**
+## Tests et qualité
 
 ```bash
-# Tests Backend (28 tests) 
+# Tests backend
 pytest                           # Tous les tests
-pytest tests/test_api_core_integration.py  # Tests API (20 tests)
+pytest tests/test_api_core_integration.py
 
-# Tests Frontend (5 tests)
+# Tests frontend
 cd frontend && npm test
 
 # Qualité du code
@@ -139,31 +133,30 @@ ruff check .                     # Linting Python
 black --check .                  # Formatage Python
 ```
 
-**Couverture actuelle** : 33 tests total (28 backend + 5 frontend)
+**Couverture actuelle** : 33 tests au total
 
-## 📚 **Documentation**
+## Documentation
 
 | Document | Description |
 |----------|-------------|
-| [API Documentation](http://localhost:8000/docs) | Documentation interactive des endpoints (Swagger) |
-| [API Guide](API_README.md) | Guide complet des endpoints et authentification |
-| [Backend Setup](backend/README.md) | Configuration FastAPI et base de données |
-| [Frontend Setup](frontend/README.md) | Configuration React et développement |
-| [Tests Guide](tests/TESTS_README.md) | Guide des tests et fixtures |
-| [Spécifications](docs/) | Cahier des charges et spécifications fonctionnelles |
+| [API Documentation](http://localhost:8000/docs) | Documentation interactive des endpoints |
+| [Backend README](backend/README.md) | Configuration FastAPI et base de données |
+| [Frontend README](frontend/README.md) | Configuration React et développement |
+| [Tests README](tests/README.md) | Guide des tests et fixtures |
+| [Spécifications](docs/) | Cahier des charges et spécifications |
 
-## 🔄 **CI/CD & Qualité**
+## CI/CD et qualité
 
 Le projet utilise **GitHub Actions** pour assurer la qualité :
 
-- ✅ **Tests automatiques** sur Python 3.11 & 3.12
-- 📊 **Analyse qualité** avec ruff, black, isort  
-- 🔍 **Vérification** sur chaque push et PR
-- 📋 **Badges de statut** en temps réel
+- Tests automatiques sur Python 3.11 et 3.12
+- Analyse qualité avec ruff, black et isort
+- Vérification sur chaque push et pull request
+- Badges de statut en temps réel
 
 Tous les PR doivent passer les tests CI/CD avant merge.
 
-## 🤝 **Contribuer**
+## Contribuer
 
 1. **Fork** le projet
 2. **Créer** une branche feature (`git checkout -b feature/amazing-feature`)
@@ -178,21 +171,9 @@ Tous les PR doivent passer les tests CI/CD avant merge.
 - Documentation à jour
 - Messages de commit conventionnels
 
-## 📄 **Licence & Équipe**
+## Licence
 
-**Projet académique** - BUT3 Informatique, parcours Qualité & Développement
+**Projet académique** - BUT3 Informatique, Qualité de Développement
 
-Développé dans le cadre du module Qualité & Développement logiciel, ce projet illustre l'application des bonnes pratiques de développement moderne.
+Le projet illustre l'application des bonnes pratiques de développement logiciel.
 
----
-
-## 🚦 **Status du Projet**
-
-- 🟢 **Backend API** : Fonctionnel et testé
-- 🟢 **Frontend React** : Interface moderne et responsive  
-- 🟢 **Base de données** : PostgreSQL avec persistance
-- 🟢 **Tests** : 33 tests couvrant les fonctionnalités critiques
-- 🟢 **CI/CD** : Pipeline automatisé opérationnel
-- 🟢 **Documentation** : Complète et à jour
-
-**Prêt pour la production** ✨

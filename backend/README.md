@@ -1,8 +1,8 @@
-# Backend — EcomNova
+# Backend - EcomNova
 
 Guide de configuration et démarrage du backend FastAPI avec PostgreSQL.
 
-## 🚀 Démarrage Rapide (Docker - Recommandé)
+## Démarrage rapide (Docker recommandé)
 
 ```bash
 # À la racine du projet
@@ -12,7 +12,7 @@ docker compose up --build
 # Documentation API: http://localhost:8000/docs
 ```
 
-## 📋 Démarrage Local
+## Démarrage Local
 
 ### Prérequis
 
@@ -75,7 +75,7 @@ uvicorn backend.app:app --reload --port 8000
 - `GET /docs` — Documentation interactive (Swagger)
 - `GET /redoc` — Documentation alternative
 
-## 🧪 Tests
+## Tests
 
 ```bash
 # Tous les tests
@@ -88,7 +88,7 @@ pytest -v
 pytest tests/test_auth_endpoints.py tests/test_product_endpoints.py
 ```
 
-## 📦 Architecture
+## Architecture
 
 ```
 backend/
@@ -105,7 +105,7 @@ backend/
 └── auth/                  # JWT & sécurité
 ```
 
-## 🔧 Dépannage
+## Dépannage
 
 ### Erreur Python 3.13
 
@@ -135,7 +135,7 @@ brew services list
 docker ps | grep postgres
 ```
 
-## 📚 Documentation Complète
+## Documentation
 
-- [API_README.md](../API_README.md) - Documentation des endpoints
-- [SETUP_COMPLETE.md](../SETUP_COMPLETE.md) - Guide d'installation détaillé
+- La documentation interactive de l'API est disponible via `/docs`
+- Les spécifications du projet se trouvent dans le dossier [docs](../docs)
