@@ -1,18 +1,18 @@
-# Frontend — EcomNova
+# Frontend - EcomNova
 
 Interface utilisateur moderne développée avec React 19, Vite 7 et les dernières technologies web.
 
-## ✨ **Fonctionnalités**
+## Fonctionnalités
 
-- 🏠 **Homepage moderne** avec statistiques animées et design glassmorphism
-- 🛍️ **Catalogue intelligent** avec recherche avancée et filtres
-- 🛒 **Panier dynamique** avec gestion temps réel des quantités
-- 💳 **Checkout sécurisé** avec validation de paiement
-- 👤 **Authentification** complète avec JWT
-- 📱 **Design responsive** pour tous les appareils
-- ⚡ **Performance optimisée** avec lazy loading et optimisations Vite
+- Homepage moderne avec statistiques animées et design glassmorphism
+- Catalogue intelligent avec recherche avancée et filtres
+- Panier dynamique avec gestion temps réel des quantités
+- Checkout sécurisé avec validation de paiement
+- Authentification complète avec JWT
+- Design responsive pour tous les appareils
+- Performance optimisée avec lazy loading et optimisations Vite
 
-## 🚀 Démarrage Rapide (Docker)
+## Démarrage rapide (Docker)
 
 ```bash
 # À la racine du projet
@@ -21,7 +21,7 @@ docker compose up --build
 # Le frontend sera accessible sur http://localhost:8080
 ```
 
-## 📋 Développement Local
+## Développement local
 
 ### Prérequis
 
@@ -38,7 +38,7 @@ npm run dev
 
 Le frontend sera accessible sur http://localhost:5173
 
-## 🧪 Tests
+## Tests
 
 ```bash
 # Lancer les tests (5 tests)
@@ -52,11 +52,11 @@ npm test -- --coverage
 ```
 
 **Tests actuels** :
-- `ProductCard.test.jsx` - Affichage composant produit
-- `Checkout.test.jsx` - Validation paiement et workflow
+- `ProductCard.test.jsx` - Affichage du composant produit
+- `Checkout.test.jsx` - Validation du paiement et du workflow
 - `Auth.test.jsx` - Page d'authentification
 
-## 🏗️ Build Production
+## Build de production
 
 ```bash
 npm run build
@@ -64,7 +64,7 @@ npm run build
 
 Les fichiers optimisés seront dans `frontend/dist/`
 
-## 📦 Technologies
+## Technologies
 
 | Technologie | Version | Usage |
 |-------------|---------|-------|
@@ -74,7 +74,7 @@ Les fichiers optimisés seront dans `frontend/dist/`
 | **Vitest** | Latest | Framework de test moderne |
 | **Testing Library** | Latest | Tests composants React |
 
-## 📚 Structure
+## Structure
 
 ```
 frontend/
@@ -101,33 +101,33 @@ frontend/
 └── package.json           # Dépendances et scripts
 ```
 
-## 🎨 **Pages Principales**
+## Pages principales
 
-### 🏠 **Home.jsx**
+### Home.jsx
 - Statistiques en temps réel depuis `/stats` API
 - Animations CSS modernes (slideIn, bounce, pulse)
 - Design glassmorphism avec particules flottantes
 - Hero section avec call-to-action
 
-### 🛍️ **Products.jsx** 
+### Products.jsx
 - Catalogue complet avec grille responsive
 - Recherche en temps réel
 - Filtres par catégorie
 - Tri par prix, nom, popularité
 
-### 💳 **Checkout.jsx**
+### Checkout.jsx
 - Validation de formulaire avancée
 - Simulation de paiement sécurisé
 - Algorithme de Luhn pour validation cartes
 - Gestion d'erreurs et succès
 
-### 🛒 **Cart.jsx**
+### Cart.jsx
 - Gestion dynamique des quantités
 - Calcul automatique des totaux
 - Synchronisation avec backend
 - Workflow vers checkout
 
-## 🔧 Configuration
+## Configuration
 
 ### Variables d'environnement
 
@@ -147,7 +147,7 @@ npm run test:ui      # Interface graphique des tests
 npm run lint         # Vérification du code
 ```
 
-## 🚀 **Optimisations**
+## Optimisations
 
 - **Code splitting** automatique par page
 - **Lazy loading** des composants lourds
@@ -156,8 +156,8 @@ npm run lint         # Vérification du code
 - **Compression Gzip** en production
 - **Cache busting** automatique
 
-## 🔗 Documentation Complète
+## Documentation
 
-- [Guide API](../API_README.md) - Endpoints et authentification
-- [Tests Report](../TESTS_REPORT.md) - Détails des tests frontend
+- [Backend README](../backend/README.md) - Configuration serveur et base de données
+- [Tests README](../tests/README.md) - Configuration des tests
 - [Spécifications](../docs/) - Cahier des charges complet

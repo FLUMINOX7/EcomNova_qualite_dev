@@ -1,8 +1,8 @@
-# Tests — EcomNova
+# Tests - EcomNova
 
 Tests automatisés pour le backend et le frontend.
 
-## 🧪 Lancer les Tests
+## Lancer les tests
 
 ### Backend (pytest)
 
@@ -19,7 +19,7 @@ pytest tests/test_auth_endpoints.py
 pytest tests/test_product_endpoints.py
 ```
 
-### Frontend (vitest)
+### Frontend (Vitest)
 
 ```bash
 cd frontend
@@ -36,12 +36,12 @@ docker compose exec backend python -m pytest -v
 docker compose exec backend python -m pytest --cov=backend
 ```
 
-## 📊 Couverture
+## Couverture
 
 La couverture actuelle des tests :
 - Backend: 44 tests passent ✅
 - Frontend: 5 tests passent ✅
 
-## 📚 Documentation
+## Documentation
 
-Voir [TESTS_README.md](./TESTS_README.md) pour la documentation complète des tests.
+Cette page centralise les commandes de test. Les guides de démarrage détaillés se trouvent dans les README racine, backend et frontend.
