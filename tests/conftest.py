@@ -1,11 +1,12 @@
 """Pytest configuration and shared fixtures for testing."""
+
 import pytest
 from fastapi.testclient import TestClient
+
 from backend.app import app
-from backend.core_runtime import (
-    users, products, carts, orders, sessions,
-    auth_service, catalog_service, cart_service, order_service
-)
+from backend.core_runtime import (auth_service, cart_service, carts,
+                                  catalog_service, order_service, orders,
+                                  products, sessions, users)
 
 
 @pytest.fixture(scope="function")
@@ -26,9 +27,9 @@ def reset_core_state():
     orders._by_id.clear()
     orders._by_user.clear()
     sessions._sessions.clear()
-    
+
     yield
-    
+
     # Clean up after test
     users._by_id.clear()
     users._by_email.clear()
@@ -42,15 +43,17 @@ def reset_core_state():
 @pytest.fixture
 def sample_product():
     """Create a sample product in the in-memory catalog."""
-    from backend.core import Product
     import uuid
+
+    from backend.core import Product
+
     product = Product(
         id=str(uuid.uuid4()),
         name="Test Product",
         description="A product for testing",
         price_cents=2500,
         stock_qty=50,
-        active=True
+        active=True,
     )
     products.add(product)
     return product
@@ -64,24 +67,20 @@ def registered_user(client):
         "password": "testpass123",
         "first_name": "Test",
         "last_name": "User",
-        "address": "123 Test Street"
+        "address": "123 Test Street",
     }
-    
+
     # Register
     response = client.post("/core/auth/register", json=user_data)
     assert response.status_code == 200
     user = response.json()
-    
+
     # Login to get token
-    login_response = client.post("/core/auth/login", json={
-        "email": user_data["email"],
-        "password": user_data["password"]
-    })
+    login_response = client.post(
+        "/core/auth/login",
+        json={"email": user_data["email"], "password": user_data["password"]},
+    )
     assert login_response.status_code == 200
     token = login_response.json()["access_token"]
-    
-    return {
-        "user": user,
-        "token": token,
-        "credentials": user_data
-    }
+
+    return {"user": user, "token": token, "credentials": user_data}

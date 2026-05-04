@@ -1,18 +1,13 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 import time
 import uuid
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
 from backend.db import Base
-from backend.models_sql import (
-    UserModel,
-    ProductModel,
-    CartModel,
-    CartItemModel,
-    OrderModel,
-    OrderItemModel,
-    OrderStatusEnum,
-)
+from backend.models_sql import (CartItemModel, CartModel, OrderItemModel,
+                                OrderModel, OrderStatusEnum, ProductModel,
+                                UserModel)
 
 
 def test_models_sql_basic():
@@ -35,19 +30,45 @@ def test_models_sql_basic():
     session.add(user)
 
     # Create products
-    p1 = ProductModel(id=str(uuid.uuid4()), name="Prod1", description="d", price_cents=1000, stock_qty=10)
-    p2 = ProductModel(id=str(uuid.uuid4()), name="Prod2", description="d2", price_cents=2500, stock_qty=5)
+    p1 = ProductModel(
+        id=str(uuid.uuid4()),
+        name="Prod1",
+        description="d",
+        price_cents=1000,
+        stock_qty=10,
+    )
+    p2 = ProductModel(
+        id=str(uuid.uuid4()),
+        name="Prod2",
+        description="d2",
+        price_cents=2500,
+        stock_qty=5,
+    )
     session.add_all([p1, p2])
 
     # Create cart for user and add cart items
     cart = CartModel(user_id=user.id, created_at=time.time())
-    ci = CartItemModel(id=str(uuid.uuid4()), cart_user_id=user.id, product_id=p1.id, quantity=2)
+    ci = CartItemModel(
+        id=str(uuid.uuid4()), cart_user_id=user.id, product_id=p1.id, quantity=2
+    )
     cart.items.append(ci)
     session.add(cart)
 
     # Create an order from cart
-    order = OrderModel(id=str(uuid.uuid4()), user_id=user.id, created_at=time.time(), status=OrderStatusEnum.CREE)
-    oi = OrderItemModel(id=str(uuid.uuid4()), order_id=order.id, product_id=p1.id, name=p1.name, unit_price_cents=p1.price_cents, quantity=2)
+    order = OrderModel(
+        id=str(uuid.uuid4()),
+        user_id=user.id,
+        created_at=time.time(),
+        status=OrderStatusEnum.CREE,
+    )
+    oi = OrderItemModel(
+        id=str(uuid.uuid4()),
+        order_id=order.id,
+        product_id=p1.id,
+        name=p1.name,
+        unit_price_cents=p1.price_cents,
+        quantity=2,
+    )
     order.items.append(oi)
     session.add(order)
 
@@ -64,7 +85,11 @@ def test_models_sql_basic():
     assert got_cart is not None and len(got_cart.items) == 1
 
     got_order = session.query(OrderModel).filter_by(user_id=user.id).one_or_none()
-    assert got_order is not None and len(got_order.items) == 1 and got_order.items[0].unit_price_cents == 1000
+    assert (
+        got_order is not None
+        and len(got_order.items) == 1
+        and got_order.items[0].unit_price_cents == 1000
+    )
 
     session.close()
 

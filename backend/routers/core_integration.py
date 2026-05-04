@@ -1,12 +1,14 @@
 """Endpoints that expose the core domain (backend/core.py) in-memory services.
 This integrates the given core.py into the FastAPI backend under a /core namespace.
 """
+
 from __future__ import annotations
-from typing import List, Optional
-from fastapi import APIRouter, HTTPException, Header
+
+from fastapi import APIRouter, Header, HTTPException
 from pydantic import BaseModel, EmailStr, Field
-from backend.core_runtime import core_services
+
 from backend.core import Product
+from backend.core_runtime import core_services
 
 router = APIRouter(prefix="/core", tags=["Core (in-memory)"])
 
@@ -57,7 +59,7 @@ class CoreCartItem(BaseModel):
 
 class CoreCart(BaseModel):
     user_id: str
-    items: List[CoreCartItem]
+    items: list[CoreCartItem]
     total_cents: int
 
 
@@ -70,7 +72,8 @@ class CoreOrder(BaseModel):
 
 # ------------- Helper -------------
 
-def _require_token(authorization: Optional[str]) -> str:
+
+def _require_token(authorization: str | None) -> str:
     if not authorization or not authorization.lower().startswith("bearer "):
         raise HTTPException(status_code=401, detail="Missing Bearer token")
     return authorization.split(" ", 1)[1]
@@ -111,7 +114,7 @@ def core_login(payload: CoreLogin):
 
 
 @router.get("/auth/me", response_model=CoreUser)
-def core_me(authorization: Optional[str] = Header(default=None)):
+def core_me(authorization: str | None = Header(default=None)):
     auth, _, _, _, sessions = core_services()
     token = _require_token(authorization)
     user_id = sessions.get_user_id(token)
@@ -129,7 +132,7 @@ def core_me(authorization: Optional[str] = Header(default=None)):
 
 
 # ------------- Products -------------
-@router.get("/products", response_model=List[CoreProduct])
+@router.get("/products", response_model=list[CoreProduct])
 def core_products_list():
     _, catalog, *_ = core_services()
     prods = catalog.list_products()
@@ -140,6 +143,7 @@ def core_products_list():
 def core_products_create(payload: CoreProductCreate):
     # For demo, allow anyone to create products in-memory
     from uuid import uuid4
+
     _, catalog, *_ = core_services()
     p = Product(
         id=str(uuid4()),
@@ -159,36 +163,49 @@ class CoreCartAdd(BaseModel):
 
 
 @router.get("/cart", response_model=CoreCart)
-def core_cart(authorization: Optional[str] = Header(default=None)):
+def core_cart(authorization: str | None = Header(default=None)):
     _, catalog, cart, _, sessions = core_services()
     token = _require_token(authorization)
     user_id = sessions.get_user_id(token)
     c = cart.view_cart(user_id)
-    items = [CoreCartItem(product_id=i.product_id, quantity=i.quantity) for i in c.items.values()]
+    items = [
+        CoreCartItem(product_id=i.product_id, quantity=i.quantity)
+        for i in c.items.values()
+    ]
     total = cart.cart_total(user_id)
     return CoreCart(user_id=user_id, items=items, total_cents=total)
 
 
 @router.post("/cart/items", response_model=CoreCart)
-def core_cart_add(payload: CoreCartAdd, authorization: Optional[str] = Header(default=None)):
+def core_cart_add(
+    payload: CoreCartAdd, authorization: str | None = Header(default=None)
+):
     _, catalog, cart, _, sessions = core_services()
     token = _require_token(authorization)
     user_id = sessions.get_user_id(token)
     cart.add_to_cart(user_id, payload.product_id, payload.quantity)
     c = cart.view_cart(user_id)
-    items = [CoreCartItem(product_id=i.product_id, quantity=i.quantity) for i in c.items.values()]
+    items = [
+        CoreCartItem(product_id=i.product_id, quantity=i.quantity)
+        for i in c.items.values()
+    ]
     total = cart.cart_total(user_id)
     return CoreCart(user_id=user_id, items=items, total_cents=total)
 
 
 # ------------- Orders -------------
 @router.post("/orders", response_model=CoreOrder)
-def core_checkout(authorization: Optional[str] = Header(default=None)):
+def core_checkout(authorization: str | None = Header(default=None)):
     *_, orders, sessions = core_services()
     token = _require_token(authorization)
     user_id = sessions.get_user_id(token)
     try:
         o = orders.checkout(user_id)
-        return CoreOrder(id=o.id, user_id=o.user_id, total_cents=o.total_cents(), status=o.status.name)
+        return CoreOrder(
+            id=o.id,
+            user_id=o.user_id,
+            total_cents=o.total_cents(),
+            status=o.status.name,
+        )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

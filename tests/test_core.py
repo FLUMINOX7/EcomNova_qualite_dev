@@ -1,4 +1,5 @@
 import time
+
 from backend import core
 
 
@@ -19,11 +20,23 @@ def test_full_order_flow():
     billing = core.BillingService(invoices)
     delivery_svc = core.DeliveryService()
     gateway = core.PaymentGateway()
-    order_svc = core.OrderService(orders, products, carts, payments, invoices, billing, delivery_svc, gateway, users)
+    order_svc = core.OrderService(
+        orders,
+        products,
+        carts,
+        payments,
+        invoices,
+        billing,
+        delivery_svc,
+        gateway,
+        users,
+    )
     cs = core.CustomerService(threads, users)
 
     # Create products
-    p1 = core.Product(id="p1", name="Item1", description="desc", price_cents=1000, stock_qty=5)
+    p1 = core.Product(
+        id="p1", name="Item1", description="desc", price_cents=1000, stock_qty=5
+    )
     products.add(p1)
 
     # Register users
@@ -66,4 +79,3 @@ def test_full_order_flow():
     th = cs.open_thread(user_id, "Help", order_id=order.id)
     msg = cs.post_message(th.id, user_id, "Bonjour")
     assert len(th.messages) == 1
-

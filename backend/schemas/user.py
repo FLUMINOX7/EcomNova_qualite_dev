@@ -1,11 +1,13 @@
 """User-related Pydantic schemas"""
+
 from __future__ import annotations
+
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional
 
 
 class UserRegister(BaseModel):
     """Schema for user registration"""
+
     email: EmailStr
     password: str = Field(min_length=6)
     first_name: str = Field(min_length=1)
@@ -15,12 +17,14 @@ class UserRegister(BaseModel):
 
 class UserLogin(BaseModel):
     """Schema for user login"""
+
     email: EmailStr
     password: str
 
 
 class UserResponse(BaseModel):
     """Schema for user response (without password)"""
+
     id: str
     email: str
     first_name: str
@@ -34,14 +38,16 @@ class UserResponse(BaseModel):
 
 class UserUpdate(BaseModel):
     """Schema for updating user personal information"""
-    email: Optional[EmailStr] = None
-    first_name: Optional[str] = Field(None, min_length=1)
-    last_name: Optional[str] = Field(None, min_length=1)
-    address: Optional[str] = Field(None, min_length=1)
+
+    email: EmailStr | None = None
+    first_name: str | None = Field(None, min_length=1)
+    last_name: str | None = Field(None, min_length=1)
+    address: str | None = Field(None, min_length=1)
 
 
 class TokenResponse(BaseModel):
     """Schema for JWT token response"""
+
     access_token: str
     token_type: str = "bearer"
     user: UserResponse

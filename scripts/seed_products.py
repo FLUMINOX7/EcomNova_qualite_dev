@@ -1,10 +1,13 @@
 """
 Seed data script for EcomNova - Adds demo products to the database
 """
+
 import uuid
+
+from sqlalchemy.orm import Session
+
 from backend.dependencies import get_session
 from backend.models_sql import ProductModel
-from sqlalchemy.orm import Session
 
 DEMO_PRODUCTS = [
     {
@@ -13,7 +16,7 @@ DEMO_PRODUCTS = [
         "price": 2499.99,
         "stock": 15,
         "category": "Computing",
-        "image": "https://images.unsplash.com/photo-1555617981-dac3880eac6e?w=400"
+        "image": "https://images.unsplash.com/photo-1555617981-dac3880eac6e?w=400",
     },
     {
         "name": "NovaSphere VR Headset",
@@ -21,7 +24,7 @@ DEMO_PRODUCTS = [
         "price": 1899.99,
         "stock": 25,
         "category": "VR",
-        "image": "https://images.unsplash.com/photo-1617802690992-15d93263d3a9?w=400"
+        "image": "https://images.unsplash.com/photo-1617802690992-15d93263d3a9?w=400",
     },
     {
         "name": "HyperLink Neural Interface",
@@ -29,7 +32,7 @@ DEMO_PRODUCTS = [
         "price": 3999.99,
         "stock": 8,
         "category": "Neural Tech",
-        "image": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400"
+        "image": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400",
     },
     {
         "name": "StarDrive Holographic Display",
@@ -37,7 +40,7 @@ DEMO_PRODUCTS = [
         "price": 4599.99,
         "stock": 12,
         "category": "Displays",
-        "image": "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400"
+        "image": "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400",
     },
     {
         "name": "AeroGlide Smart Drone Pro",
@@ -45,7 +48,7 @@ DEMO_PRODUCTS = [
         "price": 1299.99,
         "stock": 30,
         "category": "Drones",
-        "image": "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=400"
+        "image": "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=400",
     },
     {
         "name": "CyberShield Security Suite",
@@ -53,7 +56,7 @@ DEMO_PRODUCTS = [
         "price": 799.99,
         "stock": 50,
         "category": "Security",
-        "image": "https://images.unsplash.com/photo-1563206767-5b18f218e8de?w=400"
+        "image": "https://images.unsplash.com/photo-1563206767-5b18f218e8de?w=400",
     },
     {
         "name": "NanoBot Medical Scanner",
@@ -61,7 +64,7 @@ DEMO_PRODUCTS = [
         "price": 5499.99,
         "stock": 5,
         "category": "Medical",
-        "image": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400"
+        "image": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400",
     },
     {
         "name": "FusionCell Power Station",
@@ -69,7 +72,7 @@ DEMO_PRODUCTS = [
         "price": 8999.99,
         "stock": 3,
         "category": "Energy",
-        "image": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400"
+        "image": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400",
     },
     {
         "name": "GravityWave Audio System",
@@ -77,7 +80,7 @@ DEMO_PRODUCTS = [
         "price": 2199.99,
         "stock": 20,
         "category": "Audio",
-        "image": "https://images.unsplash.com/photo-1545127398-14699f92334b?w=400"
+        "image": "https://images.unsplash.com/photo-1545127398-14699f92334b?w=400",
     },
     {
         "name": "TelePort Data Hub",
@@ -85,7 +88,7 @@ DEMO_PRODUCTS = [
         "price": 6799.99,
         "stock": 7,
         "category": "Networking",
-        "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400"
+        "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400",
     },
     {
         "name": "BioSync Fitness Tracker",
@@ -93,7 +96,7 @@ DEMO_PRODUCTS = [
         "price": 899.99,
         "stock": 40,
         "category": "Health",
-        "image": "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?w=400"
+        "image": "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?w=400",
     },
     {
         "name": "EchoMind AI Assistant",
@@ -101,7 +104,7 @@ DEMO_PRODUCTS = [
         "price": 3299.99,
         "stock": 18,
         "category": "AI",
-        "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400"
+        "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400",
     },
     {
         "name": "PhotonBeam Laser Projector",
@@ -109,7 +112,7 @@ DEMO_PRODUCTS = [
         "price": 1799.99,
         "stock": 22,
         "category": "Displays",
-        "image": "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=400"
+        "image": "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=400",
     },
     {
         "name": "SkyGuard Security Drone",
@@ -117,7 +120,7 @@ DEMO_PRODUCTS = [
         "price": 2499.99,
         "stock": 14,
         "category": "Drones",
-        "image": "https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=400"
+        "image": "https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=400",
     },
     {
         "name": "MindSync Sleep Optimizer",
@@ -125,7 +128,7 @@ DEMO_PRODUCTS = [
         "price": 699.99,
         "stock": 35,
         "category": "Health",
-        "image": "https://images.unsplash.com/photo-1541480551145-2370a440d585?w=400"
+        "image": "https://images.unsplash.com/photo-1541480551145-2370a440d585?w=400",
     },
     {
         "name": "HyperCore Gaming Rig",
@@ -133,7 +136,7 @@ DEMO_PRODUCTS = [
         "price": 4299.99,
         "stock": 9,
         "category": "Computing",
-        "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400"
+        "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400",
     },
     {
         "name": "SmartFabric Wearable Tech",
@@ -141,7 +144,7 @@ DEMO_PRODUCTS = [
         "price": 449.99,
         "stock": 50,
         "category": "Health",
-        "image": "https://images.unsplash.com/photo-1556906781-9a412961c28c?w=400"
+        "image": "https://images.unsplash.com/photo-1556906781-9a412961c28c?w=400",
     },
     {
         "name": "QuantumShield VPN Router",
@@ -149,7 +152,7 @@ DEMO_PRODUCTS = [
         "price": 899.99,
         "stock": 28,
         "category": "Networking",
-        "image": "https://images.unsplash.com/photo-1606904825846-647eb07f5be2?w=400"
+        "image": "https://images.unsplash.com/photo-1606904825846-647eb07f5be2?w=400",
     },
     {
         "name": "AirPure Nano Purifier",
@@ -157,7 +160,7 @@ DEMO_PRODUCTS = [
         "price": 549.99,
         "stock": 42,
         "category": "Health",
-        "image": "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400"
+        "image": "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400",
     },
     {
         "name": "NeuralLink Keyboard Pro",
@@ -165,7 +168,7 @@ DEMO_PRODUCTS = [
         "price": 349.99,
         "stock": 60,
         "category": "Neural Tech",
-        "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400"
+        "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400",
     },
     {
         "name": "InfinityCharge Power Bank",
@@ -173,7 +176,7 @@ DEMO_PRODUCTS = [
         "price": 199.99,
         "stock": 80,
         "category": "Energy",
-        "image": "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400"
+        "image": "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400",
     },
     {
         "name": "CrystalSound ANC Headphones",
@@ -181,7 +184,7 @@ DEMO_PRODUCTS = [
         "price": 499.99,
         "stock": 45,
         "category": "Audio",
-        "image": "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400"
+        "image": "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400",
     },
     {
         "name": "VisionPro AR Glasses",
@@ -189,7 +192,7 @@ DEMO_PRODUCTS = [
         "price": 2799.99,
         "stock": 16,
         "category": "VR",
-        "image": "https://images.unsplash.com/photo-1617953141905-b27fb1f17d88?w=400"
+        "image": "https://images.unsplash.com/photo-1617953141905-b27fb1f17d88?w=400",
     },
     {
         "name": "SecureVault Biometric Safe",
@@ -197,7 +200,7 @@ DEMO_PRODUCTS = [
         "price": 1299.99,
         "stock": 12,
         "category": "Security",
-        "image": "https://images.unsplash.com/photo-1565372195458-9de0b320ef04?w=400"
+        "image": "https://images.unsplash.com/photo-1565372195458-9de0b320ef04?w=400",
     },
     {
         "name": "SmartDesk Pro Workstation",
@@ -205,7 +208,7 @@ DEMO_PRODUCTS = [
         "price": 1599.99,
         "stock": 8,
         "category": "Other",
-        "image": "https://images.unsplash.com/photo-1595515106969-1ce29566ff1c?w=400"
+        "image": "https://images.unsplash.com/photo-1595515106969-1ce29566ff1c?w=400",
     },
     {
         "name": "HyperLoop Mini Transport",
@@ -213,7 +216,7 @@ DEMO_PRODUCTS = [
         "price": 8499.99,
         "stock": 4,
         "category": "Other",
-        "image": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400"
+        "image": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400",
     },
     {
         "name": "OxygenBoost Portable Generator",
@@ -221,7 +224,7 @@ DEMO_PRODUCTS = [
         "price": 1899.99,
         "stock": 11,
         "category": "Medical",
-        "image": "https://images.unsplash.com/photo-1584982751601-97dcc096659c?w=400"
+        "image": "https://images.unsplash.com/photo-1584982751601-97dcc096659c?w=400",
     },
     {
         "name": "FlexScreen Foldable Monitor",
@@ -229,7 +232,7 @@ DEMO_PRODUCTS = [
         "price": 1999.99,
         "stock": 19,
         "category": "Displays",
-        "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400"
+        "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400",
     },
     {
         "name": "NanoClean Self-Cleaning Robot",
@@ -237,15 +240,15 @@ DEMO_PRODUCTS = [
         "price": 799.99,
         "stock": 33,
         "category": "AI",
-        "image": "https://images.unsplash.com/photo-1563207153-f403bf289096?w=400"
-    }
+        "image": "https://images.unsplash.com/photo-1563207153-f403bf289096?w=400",
+    },
 ]
 
 
 def seed_products():
     """Add demo products to the database"""
     session: Session = next(get_session())
-    
+
     try:
         created = 0
         updated = 0
@@ -260,7 +263,9 @@ def seed_products():
             if existing:
                 # Update fields (including backfilling image_url)
                 existing.description = product_data.get("description")
-                existing.image_url = product_data.get("image") or product_data.get("image_url")
+                existing.image_url = product_data.get("image") or product_data.get(
+                    "image_url"
+                )
                 existing.price_cents = int(product_data["price"] * 100)
                 existing.stock_qty = product_data["stock"]
                 existing.active = True
@@ -270,7 +275,8 @@ def seed_products():
                     id=str(uuid.uuid4()),
                     name=product_data["name"],
                     description=product_data.get("description"),
-                    image_url=product_data.get("image") or product_data.get("image_url"),
+                    image_url=product_data.get("image")
+                    or product_data.get("image_url"),
                     price_cents=int(product_data["price"] * 100),  # Convert to cents
                     stock_qty=product_data["stock"],
                     active=True,
@@ -283,13 +289,13 @@ def seed_products():
             print(f"✓ Seed complete. Created: {created}, Updated: {updated}")
         else:
             print("✓ Seed checked. No changes needed (already up to date).")
-        
+
         # Display summary of demo products with images
         print("\nDemo products (name — price — has image):")
         for p in DEMO_PRODUCTS:
-            has_img = bool(p.get('image') or p.get('image_url'))
+            has_img = bool(p.get("image") or p.get("image_url"))
             print(f"  - {p['name']} - {p['price']}€ - {'🖼️' if has_img else '—'}")
-    
+
     except Exception as e:
         session.rollback()
         print(f"Error seeding database: {e}")

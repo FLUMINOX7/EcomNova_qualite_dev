@@ -5,7 +5,7 @@ en utilisant les modèles SQLAlchemy.
 
 Usage:
     python backend/create_db.py
-    
+
     Ou avec des variables d'environnement:
     export DATABASE_URL="postgresql://user:password@localhost:5432/dbname"
     python backend/create_db.py
@@ -13,16 +13,18 @@ Usage:
 
 import os
 import sys
-from sqlalchemy import create_engine, text
+
 from models_sql import Base
+from sqlalchemy import create_engine, text
+
 
 def get_database_url():
     """Récupère l'URL de la base de données"""
-    
+
     # 1. Essayer depuis les variables d'environnement
     if "DATABASE_URL" in os.environ:
         return os.environ["DATABASE_URL"]
-    
+
     # 2. Essayer de charger depuis un fichier .env
     env_file = os.path.join(os.path.dirname(__file__), ".env")
     if os.path.exists(env_file):
@@ -34,18 +36,19 @@ def get_database_url():
                     key, value = line.split("=", 1)
                     if key.strip() == "DATABASE_URL":
                         return value.strip().strip('"').strip("'")
-    
+
     # 3. Demander interactivement
     print("\n⚠️  Variable DATABASE_URL non trouvée")
     print("\n💡 Format attendu: postgresql://user:password@host:port/database")
     print("\nExemple: postgresql://ecomnova_user:password@localhost:5432/ecomnova")
-    
+
     database_url = input("\nEntrez l'URL de connexion PostgreSQL: ").strip()
     if not database_url:
         print("❌ URL vide, abandon.")
         sys.exit(1)
-    
+
     return database_url
+
 
 def test_connection(engine):
     """Teste la connexion à la base de données"""
@@ -57,11 +60,12 @@ def test_connection(engine):
         print(f"\n❌ Erreur de connexion: {e}")
         return False
 
+
 def create_tables():
     """Crée toutes les tables définies dans les modèles SQLAlchemy"""
-    
+
     database_url = get_database_url()
-    
+
     # Masquer le mot de passe dans l'affichage
     display_url = database_url
     if "@" in database_url and ":" in database_url.split("@")[0]:
@@ -70,17 +74,17 @@ def create_tables():
         if ":" in user_pass:
             user, password = user_pass.split(":", 1)
             display_url = database_url.replace(f":{password}@", ":***@")
-    
-    print(f"\n🔄 Connexion à la base de données...")
+
+    print("\n🔄 Connexion à la base de données...")
     print(f"   URL: {display_url}")
-    
+
     # Créer le moteur de base de données
     try:
         engine = create_engine(database_url)
     except Exception as e:
         print(f"\n❌ Erreur lors de la création du moteur: {e}")
         sys.exit(1)
-    
+
     # Tester la connexion
     print("\n🔍 Test de connexion...")
     if not test_connection(engine):
@@ -89,15 +93,15 @@ def create_tables():
         print("   - Que l'utilisateur et le mot de passe sont corrects")
         print("   - Que la base de données existe")
         sys.exit(1)
-    
+
     print("✅ Connexion réussie!")
-    
+
     print("\n🔄 Création des tables...")
-    
+
     try:
         # Créer toutes les tables
         Base.metadata.create_all(bind=engine)
-        
+
         print("\n✅ Toutes les tables ont été créées avec succès!")
         print("\nTables créées:")
         for table_name in Base.metadata.tables.keys():
@@ -105,6 +109,7 @@ def create_tables():
     except Exception as e:
         print(f"\n❌ Erreur lors de la création des tables: {e}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     create_tables()

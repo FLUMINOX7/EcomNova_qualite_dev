@@ -3,18 +3,22 @@
 Script to start the EcomNova API server
 Checks Python version compatibility before starting
 """
-import sys
 import os
+import sys
 
 # Check Python version
 if sys.version_info >= (3, 13):
-    print("❌ Error: Python 3.13+ is not compatible with FastAPI 0.95.2/Pydantic 1.10.7")
+    print(
+        "❌ Error: Python 3.13+ is not compatible with FastAPI 0.95.2/Pydantic 1.10.7"
+    )
     print("   Please use Python 3.11 or 3.12")
     print("\n💡 Solution:")
     print("   1. Install Python 3.11: pyenv install 3.11.10")
     print("   2. Set local version: pyenv local 3.11.10")
     print("   3. Recreate venv: rm -rf .venv && python -m venv .venv")
-    print("   4. Reinstall deps: source .venv/bin/activate && pip install -r requirements.txt")
+    print(
+        "   4. Reinstall deps: source .venv/bin/activate && pip install -r requirements.txt"
+    )
     sys.exit(1)
 
 if sys.version_info < (3, 9):
@@ -41,4 +45,5 @@ print("   Access docs at: http://localhost:8000/docs")
 print("   Press Ctrl+C to stop\n")
 
 import uvicorn
+
 uvicorn.run("backend.app:app", host="0.0.0.0", port=8000, reload=True)
